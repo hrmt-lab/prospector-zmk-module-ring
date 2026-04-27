@@ -7,6 +7,7 @@ struct zmk_widget_modifier_indicator {
     sys_snode_t node;
     lv_obj_t *obj;
     lv_obj_t *mod_labels[4];
+    lv_obj_t *ime_label; // IMEインジケーターラベル（"IME"テキスト、ON/OFFで色変化）
 };
 
 int zmk_widget_modifier_indicator_init(struct zmk_widget_modifier_indicator *widget, lv_obj_t *parent);

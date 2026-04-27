@@ -26,11 +26,16 @@ struct modifier_indicator_state {
 #ifdef CONFIG_DT_HAS_ZMK_BEHAVIOR_CAPS_WORD_ENABLED
     bool caps_word;
 #endif
+    bool ime_active; // IME のON/OFF状態（true = IME ON, false = IME OFF）
 };
 
 #ifdef CONFIG_DT_HAS_ZMK_BEHAVIOR_CAPS_WORD_ENABLED
 static bool caps_word_active = false;
 #endif
+// IME状態を保持する静的変数。
+// ZMKはホストOSのIME状態を直接取得できないため、
+// 変換キー（INT_HENKAN）の送信でON、無変換キー（INT_MUHENKAN）の送信でOFFと見なす。
+static bool ime_active = false;
 
 static void set_modifier_color(lv_obj_t *obj, bool active, bool is_win_icon) {
     lv_color_t color = active ? lv_color_hex(DISPLAY_COLOR_MOD_ACTIVE)
@@ -90,6 +95,13 @@ static void modifier_indicator_update_cb(struct modifier_indicator_state state) 
 #endif
             set_modifier_color(widget->mod_labels[i], active, is_win_icon);
         }
+        // IMEラベルの文字色を更新する。
+        // IME ON のときはアクティブ色（テーマの mod_active_color）、
+        // IME OFF のときは非アクティブ色（テーマの mod_inactive_color）で表示する。
+        lv_obj_set_style_text_color(
+            widget->ime_label,
+            lv_color_hex(state.ime_active ? DISPLAY_COLOR_MOD_ACTIVE : DISPLAY_COLOR_MOD_INACTIVE),
+            LV_PART_MAIN);
     }
 }
 
@@ -128,11 +140,32 @@ static struct modifier_indicator_state modifier_indicator_get_state(const zmk_ev
     }
 #endif
 
+    // キーコードイベントから IME ON/OFF を検知する。
+    // zmk_keycode_state_changed イベントへのサブスクリプションは既存のものを流用しており、
+    // 新たなサブスクリプション登録は不要。
+    // kc_ev->state が true のときがキー押下（false はキーリリース）なので、
+    // 押下時のみ ime_active を更新する。
+    //   INTERNATIONAL4（変換キー）→ IME ON
+    //   INTERNATIONAL5（無変換キー）→ IME OFF
+    if (eh != NULL) {
+        const struct zmk_keycode_state_changed *kc_ev = as_zmk_keycode_state_changed(eh);
+        if (kc_ev != NULL && kc_ev->state) {
+            if (kc_ev->usage_page == HID_USAGE_KEY &&
+                kc_ev->keycode == HID_USAGE_KEY_KEYBOARD_INTERNATIONAL4) {
+                ime_active = true;
+            } else if (kc_ev->usage_page == HID_USAGE_KEY &&
+                       kc_ev->keycode == HID_USAGE_KEY_KEYBOARD_INTERNATIONAL5) {
+                ime_active = false;
+            }
+        }
+    }
+
     struct modifier_indicator_state state = {
         .mods = {false, false, false, false},
 #ifdef CONFIG_DT_HAS_ZMK_BEHAVIOR_CAPS_WORD_ENABLED
         .caps_word = caps_word_active,
 #endif
+        .ime_active = ime_active,
     };
 
     state.mods[MOD_TYPE_GUI] = (mods & (MOD_LGUI | MOD_RGUI)) != 0;
@@ -183,6 +216,24 @@ int zmk_widget_modifier_indicator_init(struct zmk_widget_modifier_indicator *wid
         }
         lv_obj_set_pos(widget->mod_labels[i], mod_positions[i][0], mod_positions[i][1]);
     }
+
+    // IMEインジケーターラベルを生成する。
+    // 初期色は非アクティブ色（IME OFF 状態）で表示する。
+    widget->ime_label = lv_label_create(widget->obj);
+    lv_label_set_text(widget->ime_label, "IME");
+    lv_obj_set_style_text_font(widget->ime_label, &DINishCondensed_SemiBold_22, LV_PART_MAIN);
+    lv_obj_set_style_text_color(widget->ime_label, lv_color_hex(DISPLAY_COLOR_MOD_INACTIVE), LV_PART_MAIN);
+    // PROSPECTOR_MODIFIER_ORDER の設定に関わらず ALT キーのインデックスを特定し、
+    // lv_obj_align_to で ALT アイコンに対して水平中央・直下に配置する。
+    // LV_ALIGN_OUT_BOTTOM_MID: 基準オブジェクト（ALTアイコン）の下辺中央を起点に配置。
+    int alt_index = 0;
+    for (int i = 0; i < 4; i++) {
+        if (modifier_order_get(i) == MOD_TYPE_ALT) {
+            alt_index = i;
+            break;
+        }
+    }
+    lv_obj_align_to(widget->ime_label, widget->mod_labels[alt_index], LV_ALIGN_OUT_BOTTOM_MID, 0, 83);
 
     sys_slist_append(&widgets, &widget->node);
 
