@@ -76,6 +76,46 @@ config PROSPECTOR_FIXED_BRIGHTNESS
     range 1 100
     depends on !PROSPECTOR_USE_AMBIENT_LIGHT_SENSOR
 
+config PROSPECTOR_DISPLAY_IDLE_TIMEOUT
+    int "Seconds of inactivity before turning the display off"
+    default 0
+    range 0 86400
+    help
+      Seconds of inactivity before the Prospector display and backlight turn off.
+      Set to 0 to disable automatic display off.
+      This timeout is independent from ZMK_IDLE_TIMEOUT and only controls the
+      Prospector display/backlight.
+
+config PROSPECTOR_BRIGHTNESS_KEY_CONTROL
+    bool "Control display brightness via keycodes"
+    default n
+    help
+      Enable changing the display backlight brightness from keyboard keycodes.
+      The configured keycodes must be emitted from the keyboard keymap, for
+      example with &kp F23 and &kp F24.
+
+config PROSPECTOR_BRIGHTNESS_UP_KEYCODE
+    int "Keycode for increasing display brightness"
+    default 115
+    depends on PROSPECTOR_BRIGHTNESS_KEY_CONTROL
+    help
+      HID keycode that increases display brightness. The default is F24.
+
+config PROSPECTOR_BRIGHTNESS_DOWN_KEYCODE
+    int "Keycode for decreasing display brightness"
+    default 114
+    depends on PROSPECTOR_BRIGHTNESS_KEY_CONTROL
+    help
+      HID keycode that decreases display brightness. The default is F23.
+
+config PROSPECTOR_BRIGHTNESS_STEP
+    int "Display brightness key adjustment step"
+    default 10
+    range 1 100
+    depends on PROSPECTOR_BRIGHTNESS_KEY_CONTROL
+    help
+      Brightness percentage points to adjust per key press.
+
 config PROSPECTOR_LAYER_NAME_UPPERCASE
     bool "Display layer names in uppercase"
     default y

@@ -97,6 +97,8 @@ To customize, add config options to your `.conf` file:
 ```ini
 CONFIG_PROSPECTOR_USE_AMBIENT_LIGHT_SENSOR=n
 CONFIG_PROSPECTOR_FIXED_BRIGHTNESS=80
+CONFIG_PROSPECTOR_DISPLAY_IDLE_TIMEOUT=30
+CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 ```
 
 ### General
@@ -105,7 +107,16 @@ CONFIG_PROSPECTOR_FIXED_BRIGHTNESS=80
 | `CONFIG_PROSPECTOR_ROTATE_DISPLAY_180` | Rotate the display 180 degrees | n |
 | `CONFIG_PROSPECTOR_USE_AMBIENT_LIGHT_SENSOR` | Use ambient light sensor for auto brightness | y |
 | `CONFIG_PROSPECTOR_FIXED_BRIGHTNESS` | Fixed display brightness when not using ambient light sensor | 50 (1-100) |
+| `CONFIG_PROSPECTOR_DISPLAY_IDLE_TIMEOUT` | Seconds of inactivity before turning the display and backlight off (`0` disables) | 0 |
+| `CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL` | Control display brightness with keycodes | n |
+| `CONFIG_PROSPECTOR_BRIGHTNESS_UP_KEYCODE` | Keycode for increasing display brightness | 115 (F24) |
+| `CONFIG_PROSPECTOR_BRIGHTNESS_DOWN_KEYCODE` | Keycode for decreasing display brightness | 114 (F23) |
+| `CONFIG_PROSPECTOR_BRIGHTNESS_STEP` | Brightness adjustment per key press | 10 |
 | `CONFIG_PROSPECTOR_LAYER_NAME_UPPERCASE` | Convert layer names to uppercase (Operator and Radii only) | y |
+
+When brightness key control is enabled, assign keys that emit the configured keycodes in your
+keyboard keymap. The defaults follow YADS/dongle-screen: F24 increases brightness and F23
+decreases brightness.
 
 ### Modifiers
 | Name | Description | Default |
