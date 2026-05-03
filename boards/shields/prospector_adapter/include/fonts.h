@@ -42,4 +42,10 @@ LV_FONT_DECLARE(DINishExpanded_Light_36);
 LV_FONT_DECLARE(FR_Medium_32);
 LV_FONT_DECLARE(DINish_Medium_24);
 
+#elif defined(CONFIG_PROSPECTOR_STATUS_SCREEN_RING)
+
+LV_FONT_DECLARE(FR_Regular_36);
+LV_FONT_DECLARE(FR_Regular_30);
+LV_FONT_DECLARE(DINishCondensed_SemiBold_20);
+
 #endif

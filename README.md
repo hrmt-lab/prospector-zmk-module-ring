@@ -2,7 +2,7 @@
 
 This is a [ZMK module](https://zmk.dev/docs/features/modules) that provides custom status screen support for the [Prospector](https://github.com/carrefinho/prospector) display dongle.
 
-![Four status screen layouts for Prospector](docs/images/status-screen-update-hero.png)
+![Five status screen layouts for Prospector](docs/images/status-screen-update-hero.png)
 
 > [!IMPORTANT]
 > This branch is a work-in-progress and is only compatible with the Zephyr 4.1 version of ZMK (current main).
@@ -20,12 +20,14 @@ This is a [ZMK module](https://zmk.dev/docs/features/modules) that provides cust
 
 ## Features
 
-- Four status screen layouts to choose from
+- Five status screen layouts to choose from
 - Active layer display
 - Peripheral battery status
 - BLE profile and output indicator
 - Active modifier display
 - Caps word indicator
+- IME state indicator (Ring)
+- Keystroke counter (Ring)
 
 ## Installation
 
@@ -71,7 +73,20 @@ Classic is used by default. To choose a different screen, add one of the followi
 CONFIG_PROSPECTOR_STATUS_SCREEN_RADII=y
 CONFIG_PROSPECTOR_STATUS_SCREEN_FIELD=y
 CONFIG_PROSPECTOR_STATUS_SCREEN_OPERATOR=y
+CONFIG_PROSPECTOR_STATUS_SCREEN_RING=y
 ```
+
+### Ring
+
+Ring is a minimal, light-themed layout built around concentric battery arcs. The number of rings and their sizing adapt automatically to the peripheral count (`ZMK_SPLIT_BLE_PERIPHERAL_COUNT`):
+
+- **1 peripheral** — single wide arc, large layer name
+- **2 peripherals** — two concentric arcs (default)
+- **3 peripherals** — three tighter arcs, slightly smaller layer name
+
+The right panel shows CTRL / SHFT / ALT / GUI modifier chips that highlight when pressed, CAPS and IME state chips, the active output endpoint (BLE profile number or USB), a keystroke counter, and dongle battery level (BLE only).
+
+IME state is inferred from key events: `INTERNATIONAL4` (変換) sets IME on, `INTERNATIONAL5` (無変換) sets IME off.
 
 ## Usage
 
@@ -112,7 +127,7 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 | `CONFIG_PROSPECTOR_BRIGHTNESS_UP_KEYCODE` | Keycode for increasing display brightness | 115 (F24) |
 | `CONFIG_PROSPECTOR_BRIGHTNESS_DOWN_KEYCODE` | Keycode for decreasing display brightness | 114 (F23) |
 | `CONFIG_PROSPECTOR_BRIGHTNESS_STEP` | Brightness adjustment per key press | 10 |
-| `CONFIG_PROSPECTOR_LAYER_NAME_UPPERCASE` | Convert layer names to uppercase (Operator and Radii only) | y |
+| `CONFIG_PROSPECTOR_LAYER_NAME_UPPERCASE` | Convert layer names to uppercase (Operator, Radii, and Ring) | y |
 
 When brightness key control is enabled, assign keys that emit the configured keycodes in your
 keyboard keymap. The defaults follow YADS/dongle-screen: F24 increases brightness and F23
@@ -145,7 +160,7 @@ CONFIG_LV_Z_VDB_SIZE=25
 ## Known Issues
 
 - One peripheral may fail to register key presses after connecting to the dongle; reset the affected peripheral to fix. https://github.com/zmkfirmware/zmk/issues/3156
-- Operator, Radii: battery display only supports up to three peripherals
+- Operator, Radii, Ring: battery display only supports up to three peripherals
 
 ## To-Do
 

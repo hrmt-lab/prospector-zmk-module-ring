@@ -1,0 +1,11 @@
+#pragma once
+
+#define RING_COLOR_BG        0xFAFAFA
+#define RING_COLOR_TEXT_PRI  0x22282C
+#define RING_COLOR_TEXT_SEC  0x5F6A70
+#define RING_COLOR_TEXT_TER  0x929FA7
+#define RING_COLOR_ACCENT    0xE89B5C
+#define RING_COLOR_P1        0x7A8B92
+#define RING_COLOR_P2        0xA6B2B8
+#define RING_COLOR_P3        0xC4CCD1
+#define RING_COLOR_TRACK     0xE2E5E8

@@ -22,6 +22,12 @@ config PROSPECTOR_STATUS_SCREEN_OPERATOR
     help
         Technical and information dense layout
 
+config PROSPECTOR_STATUS_SCREEN_RING
+    bool "Ring layout"
+    help
+        Concentric battery rings with WANA-inspired palette.
+        Supports 1-3 peripherals; ring count/size/color adapt to ZMK_SPLIT_BLE_PERIPHERAL_COUNT.
+
 endchoice
 
 config PROSPECTOR_ROTATE_DISPLAY_180
