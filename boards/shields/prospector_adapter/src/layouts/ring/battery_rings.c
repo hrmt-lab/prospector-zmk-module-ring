@@ -10,9 +10,9 @@
 
 #include "display_colors.h"
 
-// Placeholder serif fonts; replaced in Phase 6 with a proper serif typeface
 extern lv_font_t FR_Regular_36;
 extern lv_font_t FR_Regular_30;
+extern lv_font_t DINishCondensed_SemiBold_20;
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
@@ -313,6 +313,9 @@ int zmk_widget_battery_rings_init(struct zmk_widget_battery_rings *widget, lv_ob
         lv_obj_set_style_bg_color(dot, lv_color_hex(RING_COLORS[i]), LV_PART_MAIN);
         lv_obj_set_style_bg_opa(dot, LV_OPA_COVER, LV_PART_MAIN);
         lv_obj_set_style_border_width(dot, 0, LV_PART_MAIN);
+        lv_obj_set_style_pad_all(dot, 0, LV_PART_MAIN);
+        lv_obj_set_style_shadow_width(dot, 0, LV_PART_MAIN);
+        lv_obj_clear_flag(dot, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_set_pos(dot, DOT_CX[i] - 3, DOT_CY[i] - 3);
         s_dots[i]          = dot;
         widget->batt_dots[i] = dot;
@@ -325,7 +328,9 @@ int zmk_widget_battery_rings_init(struct zmk_widget_battery_rings *widget, lv_ob
         }
         lv_obj_t *val = lv_label_create(parent);
         lv_label_set_text(val, "50");   // Phase 1 placeholder
+        lv_obj_set_style_text_font(val, &DINishCondensed_SemiBold_20, LV_PART_MAIN);
         lv_obj_set_style_text_color(val, lv_color_hex(RING_COLOR_TEXT_PRI), LV_PART_MAIN);
+        lv_label_set_long_mode(val, LV_LABEL_LONG_CLIP);
         lv_obj_set_width(val, lbl_width);
         lv_obj_set_style_text_align(val, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN);
         lv_obj_set_pos(val, lbl_left, BATT_VAL_Y);

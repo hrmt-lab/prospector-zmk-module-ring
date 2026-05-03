@@ -4,5 +4,6 @@ config ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
     select LV_USE_LABEL
     select LV_USE_ARC
     select LV_COLOR_SCREEN_TRANSP
+    select LV_FONT_MONTSERRAT_10
 
 endif
