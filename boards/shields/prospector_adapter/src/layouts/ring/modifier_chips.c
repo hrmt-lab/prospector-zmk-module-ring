@@ -14,15 +14,15 @@
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
-#define CHIP_W 28
+#define CHIP_W 32
 #define CHIP_H 22
 #define CHIP_RADIUS 4
 
-static const int16_t MOD_CHIP_X[4]    = {206, 238, 206, 238};
+static const int16_t MOD_CHIP_X[4]    = {194, 228, 194, 228};
 static const int16_t MOD_CHIP_Y[4]    = {46,  46,  72,  72};
 static const char   *MOD_CHIP_TEXT[4] = {"CTRL", "SHFT", "ALT", "GUI"};
 
-static const int16_t STATE_CHIP_X[2]    = {206, 238};
+static const int16_t STATE_CHIP_X[2]    = {194, 228};
 static const int16_t STATE_CHIP_Y[2]    = {108, 108};
 static const char   *STATE_CHIP_TEXT[2] = {"CAPS", "IME"};
 

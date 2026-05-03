@@ -25,7 +25,7 @@ lv_obj_t *zmk_display_status_screen(void) {
 #endif
     lv_obj_t *kb_label = lv_label_create(screen);
     lv_label_set_text(kb_label, kb_name);
-    lv_obj_set_style_text_font(kb_label, &lv_font_montserrat_12, LV_PART_MAIN);
+    lv_obj_set_style_text_font(kb_label, &lv_font_montserrat_14, LV_PART_MAIN);
     lv_obj_set_style_text_color(kb_label, lv_color_hex(RING_COLOR_TEXT_PRI), LV_PART_MAIN);
     lv_obj_set_pos(kb_label, 18, 11);
 
