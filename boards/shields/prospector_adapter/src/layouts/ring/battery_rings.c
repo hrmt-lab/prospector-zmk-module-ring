@@ -25,28 +25,25 @@ static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 static const uint8_t  RING_RADII[]  = {78};
 static const uint8_t  RING_STROKE   = 5;
 static const uint32_t RING_COLORS[] = {RING_COLOR_P1};
-#define LAYER_LABEL_Y   102
-#define LAYER_NAME_Y    134
-#define BATT_ROW_Y      156
+#define LAYER_NAME_Y    124
 #define BATT_VAL_Y      152
+#define BATT_ROW_Y      (BATT_VAL_Y + 10)
 #define LAYER_NAME_FONT FR_Regular_36
 #elif RING_PERIPHERAL_COUNT == 2
 static const uint8_t  RING_RADII[]  = {78, 62};
 static const uint8_t  RING_STROKE   = 4;
 static const uint32_t RING_COLORS[] = {RING_COLOR_P1, RING_COLOR_P2};
-#define LAYER_LABEL_Y   102
-#define LAYER_NAME_Y    134
-#define BATT_ROW_Y      156
+#define LAYER_NAME_Y    124
 #define BATT_VAL_Y      152
+#define BATT_ROW_Y      (BATT_VAL_Y + 10)
 #define LAYER_NAME_FONT FR_Regular_36
 #else
 static const uint8_t  RING_RADII[]  = {78, 64, 50};
 static const uint8_t  RING_STROKE   = 4;
 static const uint32_t RING_COLORS[] = {RING_COLOR_P1, RING_COLOR_P2, RING_COLOR_P3};
-#define LAYER_LABEL_Y   108
-#define LAYER_NAME_Y    138
-#define BATT_ROW_Y      158
+#define LAYER_NAME_Y    127
 #define BATT_VAL_Y      154
+#define BATT_ROW_Y      (BATT_VAL_Y + 10)
 #define LAYER_NAME_FONT FR_Regular_30
 #endif
 
@@ -285,16 +282,7 @@ int zmk_widget_battery_rings_init(struct zmk_widget_battery_rings *widget, lv_ob
         widget->arcs[i] = s_arcs[i];
     }
 
-    // ── LAYER label ─────────────────────────────────────────
-    lv_obj_t *layer_label = lv_label_create(parent);
-    lv_label_set_text(layer_label, "LAYER");
-    lv_obj_set_style_text_color(layer_label, lv_color_hex(RING_COLOR_TEXT_SEC), LV_PART_MAIN);
-    lv_obj_set_style_text_letter_space(layer_label, 2, LV_PART_MAIN);
-    lv_obj_set_width(layer_label, 80);
-    lv_obj_set_style_text_align(layer_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_set_pos(layer_label, RING_CENTER_X - 40, LAYER_LABEL_Y - 5);
-
-    // ── Layer name (serif placeholder) ──────────────────────
+    // ── Layer name ───────────────────────────────────────────
     s_layer_name = lv_label_create(parent);
     lv_label_set_text(s_layer_name, "Base");
     lv_obj_set_style_text_font(s_layer_name, &LAYER_NAME_FONT, LV_PART_MAIN);

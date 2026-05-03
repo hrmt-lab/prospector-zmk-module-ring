@@ -19,11 +19,11 @@ static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 #define CHIP_RADIUS 4
 
 static const int16_t MOD_CHIP_X[4]    = {206, 238, 206, 238};
-static const int16_t MOD_CHIP_Y[4]    = {64,  64,  90,  90};
+static const int16_t MOD_CHIP_Y[4]    = {46,  46,  72,  72};
 static const char   *MOD_CHIP_TEXT[4] = {"CTRL", "SHFT", "ALT", "GUI"};
 
 static const int16_t STATE_CHIP_X[2]    = {206, 238};
-static const int16_t STATE_CHIP_Y[2]    = {138, 138};
+static const int16_t STATE_CHIP_Y[2]    = {108, 108};
 static const char   *STATE_CHIP_TEXT[2] = {"CAPS", "IME"};
 
 #ifdef CONFIG_DT_HAS_ZMK_BEHAVIOR_CAPS_WORD_ENABLED
@@ -140,26 +140,13 @@ static lv_obj_t *create_chip(lv_obj_t *parent, int16_t x, int16_t y, const char 
     return chip;
 }
 
-static lv_obj_t *create_section_label(lv_obj_t *parent, int16_t x, int16_t y, const char *text) {
-    lv_obj_t *label = lv_label_create(parent);
-    lv_label_set_text(label, text);
-    lv_obj_set_style_text_font(label, &lv_font_montserrat_10, LV_PART_MAIN);
-    lv_obj_set_style_text_color(label, lv_color_hex(RING_COLOR_TEXT_TER), LV_PART_MAIN);
-    lv_obj_set_style_text_letter_space(label, 2, LV_PART_MAIN);
-    lv_obj_set_pos(label, x, y);
-    return label;
-}
 
 int zmk_widget_modifier_chips_init(struct zmk_widget_modifier_chips *widget, lv_obj_t *parent) {
     widget->obj = parent;
 
-    create_section_label(parent, 206, 44, "MOD");
-
     for (int i = 0; i < 4; i++) {
         widget->mod_chips[i] = create_chip(parent, MOD_CHIP_X[i], MOD_CHIP_Y[i], MOD_CHIP_TEXT[i]);
     }
-
-    create_section_label(parent, 206, 118, "STATE");
 
     for (int i = 0; i < 2; i++) {
         widget->state_chips[i] =
