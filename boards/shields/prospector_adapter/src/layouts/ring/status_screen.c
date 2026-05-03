@@ -5,8 +5,6 @@
 #include "output_info.h"
 #include "display_colors.h"
 
-extern lv_font_t DINishCondensed_SemiBold_20;
-
 static struct zmk_widget_battery_rings battery_rings_widget;
 static struct zmk_widget_modifier_chips modifier_chips_widget;
 static struct zmk_widget_output_info    output_info_widget;
@@ -27,10 +25,9 @@ lv_obj_t *zmk_display_status_screen(void) {
 #endif
     lv_obj_t *kb_label = lv_label_create(screen);
     lv_label_set_text(kb_label, kb_name);
-    lv_obj_set_style_text_font(kb_label, &DINishCondensed_SemiBold_20, LV_PART_MAIN);
+    lv_obj_set_style_text_font(kb_label, &lv_font_montserrat_12, LV_PART_MAIN);
     lv_obj_set_style_text_color(kb_label, lv_color_hex(RING_COLOR_TEXT_PRI), LV_PART_MAIN);
-    lv_obj_set_style_text_letter_space(kb_label, 1, LV_PART_MAIN);
-    lv_obj_set_pos(kb_label, 14, 9);
+    lv_obj_set_pos(kb_label, 18, 11);
 
     // Vertical divider (x=190, y=34-210)
     lv_obj_t *divider = lv_obj_create(screen);

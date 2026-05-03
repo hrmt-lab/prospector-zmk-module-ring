@@ -132,7 +132,7 @@ static lv_obj_t *create_chip(lv_obj_t *parent, int16_t x, int16_t y, const char 
 
     lv_obj_t *label = lv_label_create(chip);
     lv_label_set_text(label, text);
-    lv_obj_set_style_text_font(label, &lv_font_montserrat_10, LV_PART_MAIN);
+    lv_obj_set_style_text_font(label, &lv_font_montserrat_12, LV_PART_MAIN);
     lv_obj_set_style_text_color(label, lv_color_hex(RING_COLOR_TEXT_TER), LV_PART_MAIN);
     lv_label_set_long_mode(label, LV_LABEL_LONG_CLIP);
     lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);

@@ -160,7 +160,7 @@ int zmk_widget_output_info_init(struct zmk_widget_output_info *widget, lv_obj_t 
 
     lv_obj_t *dongle_label = lv_label_create(widget->dongle_group);
     lv_label_set_text(dongle_label, "D");
-    lv_obj_set_style_text_font(dongle_label, &lv_font_montserrat_10, LV_PART_MAIN);
+    lv_obj_set_style_text_font(dongle_label, &lv_font_montserrat_12, LV_PART_MAIN);
     lv_obj_set_style_text_color(dongle_label, lv_color_hex(RING_COLOR_TEXT_TER), LV_PART_MAIN);
     lv_obj_set_pos(dongle_label, 0, 0);
 
@@ -175,7 +175,7 @@ int zmk_widget_output_info_init(struct zmk_widget_output_info *widget, lv_obj_t 
     // ── OUT section ──────────────────────────────────────────
     lv_obj_t *out_header = lv_label_create(parent);
     lv_label_set_text(out_header, "OUT");
-    lv_obj_set_style_text_font(out_header, &lv_font_montserrat_10, LV_PART_MAIN);
+    lv_obj_set_style_text_font(out_header, &lv_font_montserrat_12, LV_PART_MAIN);
     lv_obj_set_style_text_color(out_header, lv_color_hex(RING_COLOR_TEXT_TER), LV_PART_MAIN);
     lv_obj_set_style_text_letter_space(out_header, 2, LV_PART_MAIN);
     lv_obj_set_pos(out_header, 206, 172);
@@ -196,7 +196,7 @@ int zmk_widget_output_info_init(struct zmk_widget_output_info *widget, lv_obj_t 
     // ── KEYS section ─────────────────────────────────────────
     lv_obj_t *keys_header = lv_label_create(parent);
     lv_label_set_text(keys_header, "KEYS");
-    lv_obj_set_style_text_font(keys_header, &lv_font_montserrat_10, LV_PART_MAIN);
+    lv_obj_set_style_text_font(keys_header, &lv_font_montserrat_12, LV_PART_MAIN);
     lv_obj_set_style_text_color(keys_header, lv_color_hex(RING_COLOR_TEXT_TER), LV_PART_MAIN);
     lv_obj_set_style_text_letter_space(keys_header, 2, LV_PART_MAIN);
     lv_obj_set_pos(keys_header, 206, 200);
