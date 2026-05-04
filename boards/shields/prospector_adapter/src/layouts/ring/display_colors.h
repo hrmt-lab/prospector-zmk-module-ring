@@ -7,7 +7,7 @@
 #define RING_COLOR_TEXT_PRI  0x22282C
 #define RING_COLOR_TEXT_SEC  0x5F6A70
 #define RING_COLOR_TEXT_TER  0x929FA7   /* label tertiary – same in both themes */
-#define RING_COLOR_TEXT_OFF  0xD8DCDF   /* chip OFF label (light); dark = 0x3A4248 */
+#define RING_COLOR_TEXT_OFF  0xC6CDD1   /* chip OFF label (light); dark = 0x3A4248 */
 #define RING_COLOR_ACCENT    0xE89B5C
 #define RING_COLOR_P1        0x7A8B92
 #define RING_COLOR_P2        0xA6B2B8

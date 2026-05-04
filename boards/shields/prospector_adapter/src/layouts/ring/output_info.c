@@ -188,7 +188,7 @@ int zmk_widget_output_info_init(struct zmk_widget_output_info *widget, lv_obj_t 
     lv_obj_t *hsep = s_hsep;
     lv_obj_set_size(hsep, 64, 1);
     lv_obj_set_pos(hsep, 206, 142);
-    lv_obj_set_style_bg_color(hsep, lv_color_hex(ring_color_track()), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(hsep, lv_color_hex(ring_color_text_off()), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(hsep, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_style_border_width(hsep, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(hsep, 0, LV_PART_MAIN);
@@ -262,7 +262,7 @@ void ring_output_info_apply_theme(void) {
     }
     if (s_hsep) {
         lv_obj_set_style_bg_color(s_hsep,
-            lv_color_hex(ring_color_track()), LV_PART_MAIN);
+            lv_color_hex(ring_color_text_off()), LV_PART_MAIN);
     }
     if (s_out_header) {
         lv_obj_set_style_text_color(s_out_header,

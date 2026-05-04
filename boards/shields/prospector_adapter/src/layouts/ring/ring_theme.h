@@ -31,7 +31,7 @@ static inline uint32_t ring_color_text_sec(void)
 
 /* text_off: chip / indicator OFF-state label color */
 static inline uint32_t ring_color_text_off(void)
-    { return ring_dark_mode ? 0x3A4248u : 0xD8DCDFu; }
+    { return ring_dark_mode ? 0x3A4248u : 0xC6CDD1u; }
 
 static inline uint32_t ring_color_track(void)
     { return ring_dark_mode ? 0x3A4248u : 0xE2E5E8u; }

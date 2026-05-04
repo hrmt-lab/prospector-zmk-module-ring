@@ -42,7 +42,7 @@ lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_t *divider = s_divider;
     lv_obj_set_size(divider, 1, 172);
     lv_obj_set_pos(divider, 190, 36);
-    lv_obj_set_style_bg_color(divider, lv_color_hex(ring_color_track()), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(divider, lv_color_hex(ring_color_text_off()), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(divider, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_style_border_width(divider, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(divider, 0, LV_PART_MAIN);
@@ -66,6 +66,6 @@ void ring_status_screen_apply_theme(void) {
     }
     if (s_divider) {
         lv_obj_set_style_bg_color(s_divider,
-            lv_color_hex(ring_color_track()), LV_PART_MAIN);
+            lv_color_hex(ring_color_text_off()), LV_PART_MAIN);
     }
 }

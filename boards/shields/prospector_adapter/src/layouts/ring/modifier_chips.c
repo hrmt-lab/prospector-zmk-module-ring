@@ -60,10 +60,10 @@ static void set_chip_active(lv_obj_t *chip, bool active) {
         }
     } else {
         lv_obj_set_style_bg_opa(chip, LV_OPA_TRANSP, LV_PART_MAIN);
-        lv_obj_set_style_border_color(chip, lv_color_hex(ring_color_track()), LV_PART_MAIN);
+        lv_obj_set_style_border_color(chip, lv_color_hex(ring_color_text_off()), LV_PART_MAIN);
         lv_obj_set_style_border_width(chip, 1, LV_PART_MAIN);
         if (label) {
-            /* OFF label: text_off token (light=#D8DCDF, dark=#3A4248). */
+            /* OFF label: text_off token (light=#C6CDD1, dark=#3A4248). */
             lv_obj_set_style_text_color(label, lv_color_hex(ring_color_text_off()), LV_PART_MAIN);
         }
     }
@@ -140,7 +140,7 @@ static lv_obj_t *create_chip(lv_obj_t *parent, int16_t x, int16_t y, uint8_t dia
     lv_obj_set_pos(chip, x, y);
     lv_obj_set_style_radius(chip, LV_RADIUS_CIRCLE, LV_PART_MAIN);
     lv_obj_set_style_bg_opa(chip, LV_OPA_TRANSP, LV_PART_MAIN);
-    lv_obj_set_style_border_color(chip, lv_color_hex(ring_color_track()), LV_PART_MAIN);
+    lv_obj_set_style_border_color(chip, lv_color_hex(ring_color_text_off()), LV_PART_MAIN);
     lv_obj_set_style_border_width(chip, 1, LV_PART_MAIN);
     lv_obj_set_style_pad_all(chip, 0, LV_PART_MAIN);
 
@@ -168,7 +168,7 @@ int zmk_widget_modifier_chips_init(struct zmk_widget_modifier_chips *widget, lv_
     lv_obj_t *sep = s_sep;
     lv_obj_set_size(sep, 64, 1);
     lv_obj_set_pos(sep, 206, 107);
-    lv_obj_set_style_bg_color(sep, lv_color_hex(ring_color_track()), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(sep, lv_color_hex(ring_color_text_off()), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(sep, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_style_border_width(sep, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(sep, 0, LV_PART_MAIN);
@@ -195,7 +195,7 @@ lv_obj_t *zmk_widget_modifier_chips_obj(struct zmk_widget_modifier_chips *widget
 void ring_modifier_chips_apply_theme(void) {
     /* Re-apply separator color. */
     if (s_sep) {
-        lv_obj_set_style_bg_color(s_sep, lv_color_hex(ring_color_track()), LV_PART_MAIN);
+        lv_obj_set_style_bg_color(s_sep, lv_color_hex(ring_color_text_off()), LV_PART_MAIN);
     }
     /* Redraw all chips using the cached last state.  Because set_chip_active()
      * now calls ring_color_XXX() functions, the new theme colors are picked
