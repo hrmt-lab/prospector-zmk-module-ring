@@ -251,7 +251,7 @@ static lv_obj_t *create_ring_arc(lv_obj_t *parent, uint8_t radius, uint8_t strok
     lv_obj_set_pos(arc, pos_x, pos_y);
 
     lv_arc_set_range(arc, 0, 100);
-    lv_arc_set_value(arc, 50);   // Phase 1 fixed value; updated dynamically in Phase 2
+    lv_arc_set_value(arc, 0);
     lv_arc_set_bg_angles(arc, 0, 360);
     lv_arc_set_rotation(arc, 270);
 
