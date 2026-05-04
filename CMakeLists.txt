@@ -2,8 +2,6 @@ zephyr_include_directories(include)
 zephyr_include_directories(${APPLICATION_SOURCE_DIR}/include)
 zephyr_library()
 
-add_subdirectory_ifdef(CONFIG_INPUT_CST816S ${ZEPHYR_CURRENT_MODULE_DIR}/drivers/input)
-
 if(CONFIG_SHIELD_PROSPECTOR_ADAPTER)
 
         add_subdirectory(${ZEPHYR_CURRENT_MODULE_DIR}/drivers/display)
