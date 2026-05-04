@@ -191,13 +191,13 @@ int zmk_widget_output_info_init(struct zmk_widget_output_info *widget, lv_obj_t 
 
     widget->out_proto = lv_label_create(parent);
     lv_label_set_text(widget->out_proto, "USB");
-    lv_obj_set_style_text_font(widget->out_proto, &DINishCondensed_SemiBold_20, LV_PART_MAIN);
+    lv_obj_set_style_text_font(widget->out_proto, &lv_font_montserrat_14, LV_PART_MAIN);
     lv_obj_set_style_text_color(widget->out_proto, lv_color_hex(RING_COLOR_ACCENT), LV_PART_MAIN);
     lv_obj_set_pos(widget->out_proto, 238, 162);
 
     widget->out_profile = lv_label_create(parent);
     lv_label_set_text(widget->out_profile, "1");
-    lv_obj_set_style_text_font(widget->out_profile, &DINishCondensed_SemiBold_20, LV_PART_MAIN);
+    lv_obj_set_style_text_font(widget->out_profile, &lv_font_montserrat_14, LV_PART_MAIN);
     lv_obj_set_style_text_color(widget->out_profile, lv_color_hex(RING_COLOR_ACCENT), LV_PART_MAIN);
     lv_obj_set_pos(widget->out_profile, 266, 162);
     lv_obj_add_flag(widget->out_profile, LV_OBJ_FLAG_HIDDEN);
