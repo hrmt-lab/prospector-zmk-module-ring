@@ -12,3 +12,4 @@ struct zmk_widget_modifier_chips {
 
 int zmk_widget_modifier_chips_init(struct zmk_widget_modifier_chips *widget, lv_obj_t *parent);
 lv_obj_t *zmk_widget_modifier_chips_obj(struct zmk_widget_modifier_chips *widget);
+void ring_modifier_chips_apply_theme(void);

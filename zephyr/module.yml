@@ -7,3 +7,5 @@ build:
     dts_root: .
   depends:
     - lvgl
+  # drivers/ and include/ are picked up automatically via cmake: .
+  # dts/bindings/ is found because dts_root: . is set above.

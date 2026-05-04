@@ -1,3 +1,5 @@
+rsource "drivers/Kconfig"
+
 choice PROSPECTOR_STATUS_SCREEN_LAYOUT
     prompt "Status screen layout"
     default PROSPECTOR_STATUS_SCREEN_CLASSIC
@@ -127,3 +129,34 @@ config PROSPECTOR_LAYER_NAME_UPPERCASE
     default y
     help
       When enabled, layer names will be converted to uppercase for display.
+
+# ── RING layout dark theme toggle ─────────────────────────────────────
+
+config PROSPECTOR_RING_DARK_TOGGLE_KEY
+    bool "Toggle RING dark theme via keycode"
+    default n
+    depends on PROSPECTOR_STATUS_SCREEN_RING
+    help
+      When enabled, pressing the configured keycode toggles the RING
+      layout between light and dark theme at runtime.
+
+config PROSPECTOR_RING_DARK_TOGGLE_KEYCODE
+    int "Keycode for toggling RING dark theme"
+    default 111
+    depends on PROSPECTOR_RING_DARK_TOGGLE_KEY
+    help
+      HID keycode that toggles between light and dark theme.
+      Default is F20 (111). Brightness keys use F23(114) and F24(115).
+
+config PROSPECTOR_RING_DARK_TOGGLE_TOUCH
+    bool "Toggle RING dark theme via display double-tap"
+    default n
+    depends on PROSPECTOR_STATUS_SCREEN_RING
+    select INPUT
+    select INPUT_CST816S
+    select INPUT_CST816S_INTERRUPT
+    select INPUT_CST816S_EV_DEVICE
+    help
+      When enabled, double-tapping the display toggles the RING layout
+      between light and dark theme. Requires CST816S touch controller
+      to be present and configured in the devicetree.

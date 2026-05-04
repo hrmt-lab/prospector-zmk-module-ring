@@ -13,6 +13,7 @@
 #include <dt-bindings/zmk/hid_usage_pages.h>
 
 #include "display_colors.h"
+#include "ring_theme.h"
 
 extern lv_font_t DINishCondensed_SemiBold_20;
 
@@ -21,6 +22,13 @@ static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 static uint8_t active_profile_index  = 0;
 static enum zmk_transport active_transport = ZMK_TRANSPORT_USB;
 static uint32_t keys_count = 0;
+
+/* Static objects that need color updates on theme change.
+ * Promoted from local variables in zmk_widget_output_info_init().       */
+static lv_obj_t *s_dongle_label = NULL;
+static lv_obj_t *s_hsep         = NULL;
+static lv_obj_t *s_out_header   = NULL;
+static lv_obj_t *s_keys_header  = NULL;
 
 // ──────────────────────────────────────────────────────────
 // Helpers
@@ -44,7 +52,8 @@ static void update_out_display(void) {
         lv_label_set_text(widget->out_proto, is_ble ? "BLE" : "USB");
         lv_obj_set_style_text_color(
             widget->out_proto,
-            lv_color_hex(is_ble ? RING_COLOR_TEXT_SEC : RING_COLOR_ACCENT),
+            /* BLE: secondary text (theme-dependent); USB: accent (unchanged) */
+            lv_color_hex(is_ble ? ring_color_text_sec() : RING_COLOR_ACCENT),
             LV_PART_MAIN);
 
         if (is_ble) {
@@ -158,34 +167,39 @@ int zmk_widget_output_info_init(struct zmk_widget_output_info *widget, lv_obj_t 
     lv_obj_set_style_border_width(widget->dongle_group, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(widget->dongle_group, 0, LV_PART_MAIN);
 
-    lv_obj_t *dongle_label = lv_label_create(widget->dongle_group);
-    lv_label_set_text(dongle_label, "D");
-    lv_obj_set_style_text_font(dongle_label, &lv_font_montserrat_12, LV_PART_MAIN);
-    lv_obj_set_style_text_color(dongle_label, lv_color_hex(RING_COLOR_TEXT_TER), LV_PART_MAIN);
-    lv_obj_set_pos(dongle_label, 0, 0);
+    s_dongle_label = lv_label_create(widget->dongle_group);
+    lv_label_set_text(s_dongle_label, "D");
+    lv_obj_set_style_text_font(s_dongle_label, &lv_font_montserrat_12, LV_PART_MAIN);
+    /* "D" label = secondary text (light=#5F6A70, dark=#929FA7) */
+    lv_obj_set_style_text_color(s_dongle_label, lv_color_hex(ring_color_text_sec()), LV_PART_MAIN);
+    lv_obj_set_pos(s_dongle_label, 0, 0);
 
     widget->dongle_value = lv_label_create(widget->dongle_group);
     lv_label_set_text(widget->dongle_value, "---");
     lv_obj_set_style_text_font(widget->dongle_value, &DINishCondensed_SemiBold_20, LV_PART_MAIN);
-    lv_obj_set_style_text_color(widget->dongle_value, lv_color_hex(RING_COLOR_TEXT_SEC), LV_PART_MAIN);
+    /* Dongle battery number = primary text (light=#22282C, dark=#E9E7E1) */
+    lv_obj_set_style_text_color(widget->dongle_value, lv_color_hex(ring_color_text_pri()), LV_PART_MAIN);
     lv_obj_set_pos(widget->dongle_value, 14, 0);
 
     lv_obj_add_flag(widget->dongle_group, LV_OBJ_FLAG_HIDDEN);
 
     // ── Horizontal separator (STATE / OUT 間) ────────────────
-    lv_obj_t *hsep = lv_obj_create(parent);
+    s_hsep = lv_obj_create(parent);
+    lv_obj_t *hsep = s_hsep;
     lv_obj_set_size(hsep, 64, 1);
     lv_obj_set_pos(hsep, 206, 142);
-    lv_obj_set_style_bg_color(hsep, lv_color_hex(RING_COLOR_TRACK), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(hsep, lv_color_hex(ring_color_track()), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(hsep, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_style_border_width(hsep, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(hsep, 0, LV_PART_MAIN);
 
     // ── OUT section ──────────────────────────────────────────
-    lv_obj_t *out_header = lv_label_create(parent);
+    s_out_header = lv_label_create(parent);
+    lv_obj_t *out_header = s_out_header;
     lv_label_set_text(out_header, "OUT");
     lv_obj_set_style_text_font(out_header, &lv_font_montserrat_12, LV_PART_MAIN);
-    lv_obj_set_style_text_color(out_header, lv_color_hex(RING_COLOR_TEXT_TER), LV_PART_MAIN);
+    /* Section label = secondary text (light=#5F6A70, dark=#929FA7) */
+    lv_obj_set_style_text_color(out_header, lv_color_hex(ring_color_text_sec()), LV_PART_MAIN);
     lv_obj_set_style_text_letter_space(out_header, 2, LV_PART_MAIN);
     lv_obj_set_pos(out_header, 206, 162);
 
@@ -203,17 +217,18 @@ int zmk_widget_output_info_init(struct zmk_widget_output_info *widget, lv_obj_t 
     lv_obj_add_flag(widget->out_profile, LV_OBJ_FLAG_HIDDEN);
 
     // ── KEYS section ─────────────────────────────────────────
-    lv_obj_t *keys_header = lv_label_create(parent);
+    s_keys_header = lv_label_create(parent);
+    lv_obj_t *keys_header = s_keys_header;
     lv_label_set_text(keys_header, "KEYS");
     lv_obj_set_style_text_font(keys_header, &lv_font_montserrat_12, LV_PART_MAIN);
-    lv_obj_set_style_text_color(keys_header, lv_color_hex(RING_COLOR_TEXT_TER), LV_PART_MAIN);
+    lv_obj_set_style_text_color(keys_header, lv_color_hex(ring_color_text_sec()), LV_PART_MAIN);
     lv_obj_set_style_text_letter_space(keys_header, 2, LV_PART_MAIN);
     lv_obj_set_pos(keys_header, 206, 184);
 
     widget->keys_value = lv_label_create(parent);
     lv_label_set_text(widget->keys_value, "0");
     lv_obj_set_style_text_font(widget->keys_value, &DINishCondensed_SemiBold_20, LV_PART_MAIN);
-    lv_obj_set_style_text_color(widget->keys_value, lv_color_hex(RING_COLOR_TEXT_PRI), LV_PART_MAIN);
+    lv_obj_set_style_text_color(widget->keys_value, lv_color_hex(ring_color_text_pri()), LV_PART_MAIN);
     lv_obj_set_pos(widget->keys_value, 206, 200);
     lv_obj_set_width(widget->keys_value, 64);
     lv_obj_set_style_text_align(widget->keys_value, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN);
@@ -237,4 +252,36 @@ int zmk_widget_output_info_init(struct zmk_widget_output_info *widget, lv_obj_t 
 
 lv_obj_t *zmk_widget_output_info_obj(struct zmk_widget_output_info *widget) {
     return widget->obj;
+}
+
+void ring_output_info_apply_theme(void) {
+    /* Re-apply colors to static label objects. */
+    if (s_dongle_label) {
+        lv_obj_set_style_text_color(s_dongle_label,
+            lv_color_hex(ring_color_text_sec()), LV_PART_MAIN);
+    }
+    if (s_hsep) {
+        lv_obj_set_style_bg_color(s_hsep,
+            lv_color_hex(ring_color_track()), LV_PART_MAIN);
+    }
+    if (s_out_header) {
+        lv_obj_set_style_text_color(s_out_header,
+            lv_color_hex(ring_color_text_sec()), LV_PART_MAIN);
+    }
+    if (s_keys_header) {
+        lv_obj_set_style_text_color(s_keys_header,
+            lv_color_hex(ring_color_text_sec()), LV_PART_MAIN);
+    }
+
+    /* Re-apply colors to per-widget dynamic objects. */
+    struct zmk_widget_output_info *widget;
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
+        lv_obj_set_style_text_color(widget->dongle_value,
+            lv_color_hex(ring_color_text_pri()), LV_PART_MAIN);
+        lv_obj_set_style_text_color(widget->keys_value,
+            lv_color_hex(ring_color_text_pri()), LV_PART_MAIN);
+    }
+
+    /* Re-apply transport-dependent colors (BLE/USB protocol label). */
+    update_out_display();
 }

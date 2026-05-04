@@ -15,3 +15,4 @@ struct zmk_widget_output_info {
 
 int zmk_widget_output_info_init(struct zmk_widget_output_info *widget, lv_obj_t *parent);
 lv_obj_t *zmk_widget_output_info_obj(struct zmk_widget_output_info *widget);
+void ring_output_info_apply_theme(void);

@@ -9,6 +9,7 @@
 #include <zmk/keymap.h>
 
 #include "display_colors.h"
+#include "ring_theme.h"
 
 extern lv_font_t CormorantGaramond_Regular_36;
 extern lv_font_t CormorantGaramond_Regular_30;
@@ -92,7 +93,8 @@ static void update_ring(uint8_t idx) {
         lv_arc_set_value(arc, connected ? level : 0);
         lv_obj_set_style_arc_color(
             arc,
-            lv_color_hex(connected ? RING_COLORS[idx] : RING_COLOR_TRACK),
+            /* disconnected: show track color (theme-dependent) */
+            lv_color_hex(connected ? RING_COLORS[idx] : ring_color_track()),
             LV_PART_INDICATOR);
     }
 
@@ -100,7 +102,7 @@ static void update_ring(uint8_t idx) {
     if (dot) {
         lv_obj_set_style_bg_color(
             dot,
-            lv_color_hex(connected ? RING_COLORS[idx] : RING_COLOR_TRACK),
+            lv_color_hex(connected ? RING_COLORS[idx] : ring_color_track()),
             LV_PART_MAIN);
     }
 
@@ -253,9 +255,9 @@ static lv_obj_t *create_ring_arc(lv_obj_t *parent, uint8_t radius, uint8_t strok
     lv_arc_set_bg_angles(arc, 0, 360);
     lv_arc_set_rotation(arc, 270);
 
-    // Background arc = track (gray)
+    // Background arc = track (theme-dependent)
     lv_obj_set_style_arc_width(arc, stroke, LV_PART_MAIN);
-    lv_obj_set_style_arc_color(arc, lv_color_hex(RING_COLOR_TRACK), LV_PART_MAIN);
+    lv_obj_set_style_arc_color(arc, lv_color_hex(ring_color_track()), LV_PART_MAIN);
     lv_obj_set_style_arc_rounded(arc, true, LV_PART_MAIN);
 
     // Indicator arc = battery fill
@@ -287,7 +289,7 @@ int zmk_widget_battery_rings_init(struct zmk_widget_battery_rings *widget, lv_ob
     s_layer_name = lv_label_create(parent);
     lv_label_set_text(s_layer_name, "Base");
     lv_obj_set_style_text_font(s_layer_name, &LAYER_NAME_FONT, LV_PART_MAIN);
-    lv_obj_set_style_text_color(s_layer_name, lv_color_hex(RING_COLOR_TEXT_PRI), LV_PART_MAIN);
+    lv_obj_set_style_text_color(s_layer_name, lv_color_hex(ring_color_text_pri()), LV_PART_MAIN);
     lv_obj_set_style_text_align(s_layer_name, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_set_width(s_layer_name, 150);
     lv_obj_set_pos(s_layer_name, RING_CENTER_X - 75, LAYER_NAME_Y - 20);
@@ -318,7 +320,7 @@ int zmk_widget_battery_rings_init(struct zmk_widget_battery_rings *widget, lv_ob
         lv_obj_t *val = lv_label_create(parent);
         lv_label_set_text(val, "-");
         lv_obj_set_style_text_font(val, &DINishCondensed_SemiBold_20, LV_PART_MAIN);
-        lv_obj_set_style_text_color(val, lv_color_hex(RING_COLOR_TEXT_PRI), LV_PART_MAIN);
+        lv_obj_set_style_text_color(val, lv_color_hex(ring_color_text_pri()), LV_PART_MAIN);
         lv_label_set_long_mode(val, LV_LABEL_LONG_CLIP);
         lv_obj_set_width(val, lbl_width);
         lv_obj_set_style_text_align(val, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN);
@@ -341,4 +343,26 @@ int zmk_widget_battery_rings_init(struct zmk_widget_battery_rings *widget, lv_ob
 
 lv_obj_t *zmk_widget_battery_rings_obj(struct zmk_widget_battery_rings *widget) {
     return widget->obj;
+}
+
+void ring_battery_rings_apply_theme(void) {
+    /* Re-apply theme-dependent colors to all battery ring objects. */
+    if (s_layer_name) {
+        lv_obj_set_style_text_color(s_layer_name,
+            lv_color_hex(ring_color_text_pri()), LV_PART_MAIN);
+    }
+    for (int i = 0; i < RING_PERIPHERAL_COUNT; i++) {
+        if (s_arcs[i]) {
+            /* Update background arc (track) color. */
+            lv_obj_set_style_arc_color(s_arcs[i],
+                lv_color_hex(ring_color_track()), LV_PART_MAIN);
+        }
+        if (s_vals[i]) {
+            lv_obj_set_style_text_color(s_vals[i],
+                lv_color_hex(ring_color_text_pri()), LV_PART_MAIN);
+        }
+        /* Re-run ring update to refresh disconnected-state track color
+         * on the indicator arc and dot.                                    */
+        update_ring(i);
+    }
 }

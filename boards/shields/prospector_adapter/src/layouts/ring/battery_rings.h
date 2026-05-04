@@ -19,3 +19,4 @@ struct zmk_widget_battery_rings {
 
 int zmk_widget_battery_rings_init(struct zmk_widget_battery_rings *widget, lv_obj_t *parent);
 lv_obj_t *zmk_widget_battery_rings_obj(struct zmk_widget_battery_rings *widget);
+void ring_battery_rings_apply_theme(void);

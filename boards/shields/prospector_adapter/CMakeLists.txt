@@ -39,7 +39,12 @@ if(CONFIG_SHIELD_PROSPECTOR_ADAPTER)
   elseif(CONFIG_PROSPECTOR_STATUS_SCREEN_RING)
     file(GLOB layout_sources src/layouts/ring/*.c)
     list(FILTER layout_sources EXCLUDE REGEX "status_screen\\.c$")
+    # ring_touch.c requires CST816S; included separately below.
+    list(FILTER layout_sources EXCLUDE REGEX "ring_touch\\.c$")
     zephyr_library_sources(${layout_sources})
+    if(CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH)
+      zephyr_library_sources(src/layouts/ring/ring_touch.c)
+    endif()
   endif()
 
   zephyr_library_sources(${font_sources})

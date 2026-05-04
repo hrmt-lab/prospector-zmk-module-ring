@@ -11,10 +11,13 @@
 #include <dt-bindings/zmk/hid_usage_pages.h>
 
 #include "display_colors.h"
+#include "ring_theme.h"
 
 extern lv_font_t Unicode_15;
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
+/* Separator object between MOD and STATE chips; stored for theme reapply. */
+static lv_obj_t *s_sep = NULL;
 
 #define MOD_DIAM   24  // r=12
 #define STATE_DIAM 20  // r=10
@@ -33,6 +36,10 @@ static bool caps_word_active = false;
 #endif
 static bool ime_active = false;
 
+/* Last known chip state – used by ring_modifier_chips_apply_theme() to
+ * redraw chips with correct active/inactive colors after a theme switch. */
+static struct modifier_chips_state s_last_state;
+
 struct modifier_chips_state {
     bool mods[4];
 #ifdef CONFIG_DT_HAS_ZMK_BEHAVIOR_CAPS_WORD_ENABLED
@@ -48,19 +55,23 @@ static void set_chip_active(lv_obj_t *chip, bool active) {
         lv_obj_set_style_bg_color(chip, lv_color_hex(RING_COLOR_ACCENT), LV_PART_MAIN);
         lv_obj_set_style_border_width(chip, 0, LV_PART_MAIN);
         if (label) {
-            lv_obj_set_style_text_color(label, lv_color_hex(RING_COLOR_BG), LV_PART_MAIN);
+            /* ON label: dark text on amber chip – same value in both themes. */
+            lv_obj_set_style_text_color(label, lv_color_hex(ring_color_bg()), LV_PART_MAIN);
         }
     } else {
         lv_obj_set_style_bg_opa(chip, LV_OPA_TRANSP, LV_PART_MAIN);
-        lv_obj_set_style_border_color(chip, lv_color_hex(RING_COLOR_TRACK), LV_PART_MAIN);
+        lv_obj_set_style_border_color(chip, lv_color_hex(ring_color_track()), LV_PART_MAIN);
         lv_obj_set_style_border_width(chip, 1, LV_PART_MAIN);
         if (label) {
-            lv_obj_set_style_text_color(label, lv_color_hex(RING_COLOR_TEXT_TER), LV_PART_MAIN);
+            /* OFF label: text_off token (light=#D8DCDF, dark=#3A4248). */
+            lv_obj_set_style_text_color(label, lv_color_hex(ring_color_text_off()), LV_PART_MAIN);
         }
     }
 }
 
 static void modifier_chips_update_cb(struct modifier_chips_state state) {
+    /* Cache for theme reapply without needing to re-query ZMK state. */
+    s_last_state = state;
     struct zmk_widget_modifier_chips *widget;
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
         set_chip_active(widget->mod_chips[0], state.mods[0]);
@@ -129,14 +140,15 @@ static lv_obj_t *create_chip(lv_obj_t *parent, int16_t x, int16_t y, uint8_t dia
     lv_obj_set_pos(chip, x, y);
     lv_obj_set_style_radius(chip, LV_RADIUS_CIRCLE, LV_PART_MAIN);
     lv_obj_set_style_bg_opa(chip, LV_OPA_TRANSP, LV_PART_MAIN);
-    lv_obj_set_style_border_color(chip, lv_color_hex(RING_COLOR_TRACK), LV_PART_MAIN);
+    lv_obj_set_style_border_color(chip, lv_color_hex(ring_color_track()), LV_PART_MAIN);
     lv_obj_set_style_border_width(chip, 1, LV_PART_MAIN);
     lv_obj_set_style_pad_all(chip, 0, LV_PART_MAIN);
 
     lv_obj_t *label = lv_label_create(chip);
     lv_label_set_text(label, text);
     lv_obj_set_style_text_font(label, &lv_font_montserrat_14, LV_PART_MAIN);
-    lv_obj_set_style_text_color(label, lv_color_hex(RING_COLOR_TEXT_TER), LV_PART_MAIN);
+    /* Initial state = OFF; use text_off token. */
+    lv_obj_set_style_text_color(label, lv_color_hex(ring_color_text_off()), LV_PART_MAIN);
     lv_label_set_long_mode(label, LV_LABEL_LONG_CLIP);
     lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
 
@@ -152,10 +164,11 @@ int zmk_widget_modifier_chips_init(struct zmk_widget_modifier_chips *widget, lv_
                                            MOD_DIAM, MOD_CHIP_TEXT[i]);
     }
 
-    lv_obj_t *sep = lv_obj_create(parent);
+    s_sep = lv_obj_create(parent);
+    lv_obj_t *sep = s_sep;
     lv_obj_set_size(sep, 64, 1);
     lv_obj_set_pos(sep, 206, 107);
-    lv_obj_set_style_bg_color(sep, lv_color_hex(RING_COLOR_TRACK), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(sep, lv_color_hex(ring_color_track()), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(sep, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_style_border_width(sep, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(sep, 0, LV_PART_MAIN);
@@ -177,4 +190,15 @@ int zmk_widget_modifier_chips_init(struct zmk_widget_modifier_chips *widget, lv_
 
 lv_obj_t *zmk_widget_modifier_chips_obj(struct zmk_widget_modifier_chips *widget) {
     return widget->obj;
+}
+
+void ring_modifier_chips_apply_theme(void) {
+    /* Re-apply separator color. */
+    if (s_sep) {
+        lv_obj_set_style_bg_color(s_sep, lv_color_hex(ring_color_track()), LV_PART_MAIN);
+    }
+    /* Redraw all chips using the cached last state.  Because set_chip_active()
+     * now calls ring_color_XXX() functions, the new theme colors are picked
+     * up automatically here without any extra logic.                          */
+    modifier_chips_update_cb(s_last_state);
 }
