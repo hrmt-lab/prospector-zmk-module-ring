@@ -152,6 +152,14 @@ int zmk_widget_modifier_chips_init(struct zmk_widget_modifier_chips *widget, lv_
                                            MOD_DIAM, MOD_CHIP_TEXT[i]);
     }
 
+    lv_obj_t *sep = lv_obj_create(parent);
+    lv_obj_set_size(sep, 64, 1);
+    lv_obj_set_pos(sep, 206, 107);
+    lv_obj_set_style_bg_color(sep, lv_color_hex(RING_COLOR_TRACK), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(sep, LV_OPA_COVER, LV_PART_MAIN);
+    lv_obj_set_style_border_width(sep, 0, LV_PART_MAIN);
+    lv_obj_set_style_pad_all(sep, 0, LV_PART_MAIN);
+
     for (int i = 0; i < 2; i++) {
         widget->state_chips[i] = create_chip(parent, STATE_CHIP_X[i], STATE_CHIP_Y[i],
                                              STATE_DIAM, STATE_CHIP_TEXT[i]);
