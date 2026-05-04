@@ -47,13 +47,15 @@ static int ring_touch_init(void) {
     return 0;
 }
 /* Run after CST816S driver (POST_KERNEL) has initialized the chip. */
-SYS_INIT(ring_touch_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY + 1);
+SYS_INIT(ring_touch_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
 /* Receive Zephyr input events from the CST816S driver. */
-static void touch_input_cb(struct input_event *evt) {
+static void touch_input_cb(struct input_event *evt, void *user_data) {
+    ARG_UNUSED(user_data);
+
     if (evt->type == INPUT_EV_DEVICE &&
         evt->code == CST816S_GESTURE_CODE_DOUBLE_CLICK) {
         ring_theme_toggle();
     }
 }
-INPUT_CALLBACK_DEFINE(DEVICE_DT_GET(DT_NODELABEL(cst816s)), touch_input_cb);
+INPUT_CALLBACK_DEFINE(DEVICE_DT_GET(DT_NODELABEL(cst816s)), touch_input_cb, NULL);
