@@ -31,8 +31,8 @@ lv_obj_t *zmk_display_status_screen(void) {
 
     // Vertical divider (x=190, y=34-210)
     lv_obj_t *divider = lv_obj_create(screen);
-    lv_obj_set_size(divider, 1, 176);
-    lv_obj_set_pos(divider, 190, 34);
+    lv_obj_set_size(divider, 1, 172);
+    lv_obj_set_pos(divider, 190, 36);
     lv_obj_set_style_bg_color(divider, lv_color_hex(RING_COLOR_TRACK), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(divider, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_style_border_width(divider, 0, LV_PART_MAIN);

@@ -10,8 +10,8 @@
 
 #include "display_colors.h"
 
-extern lv_font_t FR_Regular_36;
-extern lv_font_t FR_Regular_30;
+extern lv_font_t CormorantGaramond_Regular_36;
+extern lv_font_t CormorantGaramond_Regular_30;
 extern lv_font_t DINishCondensed_SemiBold_20;
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
@@ -28,7 +28,8 @@ static const uint32_t RING_COLORS[] = {RING_COLOR_P1};
 #define LAYER_NAME_Y    124
 #define BATT_VAL_Y      152
 #define BATT_ROW_Y      (BATT_VAL_Y + 10)
-#define LAYER_NAME_FONT FR_Regular_36
+#define LAYER_NAME_FONT CormorantGaramond_Regular_36
+
 #elif RING_PERIPHERAL_COUNT == 2
 static const uint8_t  RING_RADII[]  = {78, 62};
 static const uint8_t  RING_STROKE   = 4;
@@ -36,7 +37,7 @@ static const uint32_t RING_COLORS[] = {RING_COLOR_P1, RING_COLOR_P2};
 #define LAYER_NAME_Y    124
 #define BATT_VAL_Y      152
 #define BATT_ROW_Y      (BATT_VAL_Y + 10)
-#define LAYER_NAME_FONT FR_Regular_36
+#define LAYER_NAME_FONT CormorantGaramond_Regular_36
 #else
 static const uint8_t  RING_RADII[]  = {78, 64, 50};
 static const uint8_t  RING_STROKE   = 4;
@@ -44,7 +45,7 @@ static const uint32_t RING_COLORS[] = {RING_COLOR_P1, RING_COLOR_P2, RING_COLOR_
 #define LAYER_NAME_Y    127
 #define BATT_VAL_Y      154
 #define BATT_ROW_Y      (BATT_VAL_Y + 10)
-#define LAYER_NAME_FONT FR_Regular_30
+#define LAYER_NAME_FONT CormorantGaramond_Regular_30
 #endif
 
 // Per-peripheral dot/value positions (dot center x, dot center y, value label left x, value label right x)

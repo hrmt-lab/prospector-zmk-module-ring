@@ -12,19 +12,21 @@
 
 #include "display_colors.h"
 
+extern lv_font_t Unicode_13;
+
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
-#define CHIP_W 32
-#define CHIP_H 22
-#define CHIP_RADIUS 4
+#define MOD_DIAM   24  // r=12
+#define STATE_DIAM 20  // r=10
 
-static const int16_t MOD_CHIP_X[4]    = {194, 228, 194, 228};
-static const int16_t MOD_CHIP_Y[4]    = {46,  46,  72,  72};
-static const char   *MOD_CHIP_TEXT[4] = {"CTRL", "SHFT", "ALT", "GUI"};
+static const int16_t MOD_CHIP_X[4]    = {206, 236, 206, 236};
+static const int16_t MOD_CHIP_Y[4]    = {46,  46,  76,  76};
+static const char   *MOD_CHIP_TEXT[4] = {"C", "S", "A", "G"};
 
-static const int16_t STATE_CHIP_X[2]    = {194, 228};
-static const int16_t STATE_CHIP_Y[2]    = {108, 108};
-static const char   *STATE_CHIP_TEXT[2] = {"CAPS", "IME"};
+static const int16_t STATE_CHIP_X[2]    = {208, 238};
+static const int16_t STATE_CHIP_Y[2]    = {114, 114};
+// ⇪ = U+21EA (UTF-8: \xe2\x87\xaa), あ = U+3042 (UTF-8: \xe3\x81\x82)
+static const char   *STATE_CHIP_TEXT[2] = {"\xe2\x87\xaa", "\xe3\x81\x82"};
 
 #ifdef CONFIG_DT_HAS_ZMK_BEHAVIOR_CAPS_WORD_ENABLED
 static bool caps_word_active = false;
@@ -120,11 +122,12 @@ ZMK_SUBSCRIPTION(widget_modifier_chips, zmk_keycode_state_changed);
 ZMK_SUBSCRIPTION(widget_modifier_chips, zmk_caps_word_state_changed);
 #endif
 
-static lv_obj_t *create_chip(lv_obj_t *parent, int16_t x, int16_t y, const char *text) {
+static lv_obj_t *create_chip(lv_obj_t *parent, int16_t x, int16_t y, uint8_t diam,
+                              const char *text) {
     lv_obj_t *chip = lv_obj_create(parent);
-    lv_obj_set_size(chip, CHIP_W, CHIP_H);
+    lv_obj_set_size(chip, diam, diam);
     lv_obj_set_pos(chip, x, y);
-    lv_obj_set_style_radius(chip, CHIP_RADIUS, LV_PART_MAIN);
+    lv_obj_set_style_radius(chip, LV_RADIUS_CIRCLE, LV_PART_MAIN);
     lv_obj_set_style_bg_opa(chip, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_border_color(chip, lv_color_hex(RING_COLOR_TRACK), LV_PART_MAIN);
     lv_obj_set_style_border_width(chip, 1, LV_PART_MAIN);
@@ -145,12 +148,17 @@ int zmk_widget_modifier_chips_init(struct zmk_widget_modifier_chips *widget, lv_
     widget->obj = parent;
 
     for (int i = 0; i < 4; i++) {
-        widget->mod_chips[i] = create_chip(parent, MOD_CHIP_X[i], MOD_CHIP_Y[i], MOD_CHIP_TEXT[i]);
+        widget->mod_chips[i] = create_chip(parent, MOD_CHIP_X[i], MOD_CHIP_Y[i],
+                                           MOD_DIAM, MOD_CHIP_TEXT[i]);
     }
 
     for (int i = 0; i < 2; i++) {
-        widget->state_chips[i] =
-            create_chip(parent, STATE_CHIP_X[i], STATE_CHIP_Y[i], STATE_CHIP_TEXT[i]);
+        widget->state_chips[i] = create_chip(parent, STATE_CHIP_X[i], STATE_CHIP_Y[i],
+                                             STATE_DIAM, STATE_CHIP_TEXT[i]);
+        lv_obj_t *lbl = lv_obj_get_child(widget->state_chips[i], 0);
+        if (lbl) {
+            lv_obj_set_style_text_font(lbl, &Unicode_13, LV_PART_MAIN);
+        }
     }
 
     sys_slist_append(&widgets, &widget->node);

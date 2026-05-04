@@ -172,25 +172,34 @@ int zmk_widget_output_info_init(struct zmk_widget_output_info *widget, lv_obj_t 
 
     lv_obj_add_flag(widget->dongle_group, LV_OBJ_FLAG_HIDDEN);
 
+    // ── Horizontal separator (STATE / OUT 間) ────────────────
+    lv_obj_t *hsep = lv_obj_create(parent);
+    lv_obj_set_size(hsep, 64, 1);
+    lv_obj_set_pos(hsep, 206, 142);
+    lv_obj_set_style_bg_color(hsep, lv_color_hex(RING_COLOR_TRACK), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(hsep, LV_OPA_COVER, LV_PART_MAIN);
+    lv_obj_set_style_border_width(hsep, 0, LV_PART_MAIN);
+    lv_obj_set_style_pad_all(hsep, 0, LV_PART_MAIN);
+
     // ── OUT section ──────────────────────────────────────────
     lv_obj_t *out_header = lv_label_create(parent);
     lv_label_set_text(out_header, "OUT");
     lv_obj_set_style_text_font(out_header, &lv_font_montserrat_12, LV_PART_MAIN);
     lv_obj_set_style_text_color(out_header, lv_color_hex(RING_COLOR_TEXT_TER), LV_PART_MAIN);
     lv_obj_set_style_text_letter_space(out_header, 2, LV_PART_MAIN);
-    lv_obj_set_pos(out_header, 194, 172);
+    lv_obj_set_pos(out_header, 206, 162);
 
     widget->out_proto = lv_label_create(parent);
     lv_label_set_text(widget->out_proto, "USB");
     lv_obj_set_style_text_font(widget->out_proto, &DINishCondensed_SemiBold_20, LV_PART_MAIN);
     lv_obj_set_style_text_color(widget->out_proto, lv_color_hex(RING_COLOR_ACCENT), LV_PART_MAIN);
-    lv_obj_set_pos(widget->out_proto, 228, 172);
+    lv_obj_set_pos(widget->out_proto, 238, 162);
 
     widget->out_profile = lv_label_create(parent);
     lv_label_set_text(widget->out_profile, "1");
     lv_obj_set_style_text_font(widget->out_profile, &DINishCondensed_SemiBold_20, LV_PART_MAIN);
     lv_obj_set_style_text_color(widget->out_profile, lv_color_hex(RING_COLOR_ACCENT), LV_PART_MAIN);
-    lv_obj_set_pos(widget->out_profile, 252, 172);
+    lv_obj_set_pos(widget->out_profile, 266, 162);
     lv_obj_add_flag(widget->out_profile, LV_OBJ_FLAG_HIDDEN);
 
     // ── KEYS section ─────────────────────────────────────────
@@ -199,13 +208,13 @@ int zmk_widget_output_info_init(struct zmk_widget_output_info *widget, lv_obj_t 
     lv_obj_set_style_text_font(keys_header, &lv_font_montserrat_12, LV_PART_MAIN);
     lv_obj_set_style_text_color(keys_header, lv_color_hex(RING_COLOR_TEXT_TER), LV_PART_MAIN);
     lv_obj_set_style_text_letter_space(keys_header, 2, LV_PART_MAIN);
-    lv_obj_set_pos(keys_header, 194, 200);
+    lv_obj_set_pos(keys_header, 206, 184);
 
     widget->keys_value = lv_label_create(parent);
     lv_label_set_text(widget->keys_value, "0");
     lv_obj_set_style_text_font(widget->keys_value, &DINishCondensed_SemiBold_20, LV_PART_MAIN);
     lv_obj_set_style_text_color(widget->keys_value, lv_color_hex(RING_COLOR_TEXT_PRI), LV_PART_MAIN);
-    lv_obj_set_pos(widget->keys_value, 228, 200);
+    lv_obj_set_pos(widget->keys_value, 228, 184);
 
     // Initialise endpoint/profile state from current values
     if (sys_slist_is_empty(&widgets)) {
