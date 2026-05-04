@@ -214,7 +214,9 @@ int zmk_widget_output_info_init(struct zmk_widget_output_info *widget, lv_obj_t 
     lv_label_set_text(widget->keys_value, "0");
     lv_obj_set_style_text_font(widget->keys_value, &DINishCondensed_SemiBold_20, LV_PART_MAIN);
     lv_obj_set_style_text_color(widget->keys_value, lv_color_hex(RING_COLOR_TEXT_PRI), LV_PART_MAIN);
-    lv_obj_set_pos(widget->keys_value, 228, 184);
+    lv_obj_set_pos(widget->keys_value, 206, 200);
+    lv_obj_set_width(widget->keys_value, 64);
+    lv_obj_set_style_text_align(widget->keys_value, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN);
 
     // Initialise endpoint/profile state from current values
     if (sys_slist_is_empty(&widgets)) {

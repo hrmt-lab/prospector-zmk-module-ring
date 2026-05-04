@@ -12,7 +12,7 @@
 
 #include "display_colors.h"
 
-extern lv_font_t Unicode_13;
+extern lv_font_t Unicode_15;
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
@@ -135,7 +135,7 @@ static lv_obj_t *create_chip(lv_obj_t *parent, int16_t x, int16_t y, uint8_t dia
 
     lv_obj_t *label = lv_label_create(chip);
     lv_label_set_text(label, text);
-    lv_obj_set_style_text_font(label, &lv_font_montserrat_12, LV_PART_MAIN);
+    lv_obj_set_style_text_font(label, &lv_font_montserrat_14, LV_PART_MAIN);
     lv_obj_set_style_text_color(label, lv_color_hex(RING_COLOR_TEXT_TER), LV_PART_MAIN);
     lv_label_set_long_mode(label, LV_LABEL_LONG_CLIP);
     lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
@@ -157,7 +157,7 @@ int zmk_widget_modifier_chips_init(struct zmk_widget_modifier_chips *widget, lv_
                                              STATE_DIAM, STATE_CHIP_TEXT[i]);
         lv_obj_t *lbl = lv_obj_get_child(widget->state_chips[i], 0);
         if (lbl) {
-            lv_obj_set_style_text_font(lbl, &Unicode_13, LV_PART_MAIN);
+            lv_obj_set_style_text_font(lbl, &Unicode_15, LV_PART_MAIN);
         }
     }
 
