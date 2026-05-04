@@ -316,7 +316,7 @@ int zmk_widget_battery_rings_init(struct zmk_widget_battery_rings *widget, lv_ob
             lbl_width = 20;
         }
         lv_obj_t *val = lv_label_create(parent);
-        lv_label_set_text(val, "50");   // Phase 1 placeholder
+        lv_label_set_text(val, "-");
         lv_obj_set_style_text_font(val, &DINishCondensed_SemiBold_20, LV_PART_MAIN);
         lv_obj_set_style_text_color(val, lv_color_hex(RING_COLOR_TEXT_PRI), LV_PART_MAIN);
         lv_label_set_long_mode(val, LV_LABEL_LONG_CLIP);
