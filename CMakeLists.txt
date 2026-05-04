@@ -4,7 +4,9 @@ zephyr_library()
 
 if(CONFIG_SHIELD_PROSPECTOR_ADAPTER)
 
-        add_subdirectory(${ZEPHYR_CURRENT_MODULE_DIR}/drivers/display)
+        if(EXISTS ${ZEPHYR_CURRENT_MODULE_DIR}/drivers/display/CMakeLists.txt)
+                add_subdirectory(${ZEPHYR_CURRENT_MODULE_DIR}/drivers/display)
+        endif()
 
         if(CONFIG_DT_HAS_ZMK_BEHAVIOR_CAPS_WORD_ENABLED)
                 zephyr_library_sources(src/events/caps_word_state_changed.c)
