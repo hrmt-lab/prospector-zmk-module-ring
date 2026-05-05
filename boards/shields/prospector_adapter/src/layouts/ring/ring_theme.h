@@ -35,3 +35,19 @@ static inline uint32_t ring_color_text_off(void)
 
 static inline uint32_t ring_color_track(void)
     { return ring_dark_mode ? 0x3A4248u : 0xE2E5E8u; }
+
+/* ── Gesture navigation color tokens ─────────────────────────────────── */
+
+/* Page dots */
+static inline uint32_t ring_color_page_dot_active(void)
+    { return ring_dark_mode ? 0xE9E7E1u : 0x22282Cu; }
+static inline uint32_t ring_color_page_dot_inactive(void)
+    { return ring_dark_mode ? 0x4A555Cu : 0xD0D5D8u; }
+
+/* Cancel button text (border reuses ring_color_track()) */
+static inline uint32_t ring_color_cancel_text(void)
+    { return ring_dark_mode ? 0x5F6A70u : 0x929FA7u; }
+
+/* Subtext (swipe hints, secondary labels on gesture pages) */
+static inline uint32_t ring_color_subtext(void)
+    { return ring_dark_mode ? 0x4A555Cu : 0xC8CDD0u; }

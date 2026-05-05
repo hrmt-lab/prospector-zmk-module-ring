@@ -23,7 +23,7 @@ static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
 // Per-peripheral-count ring parameters
 #if RING_PERIPHERAL_COUNT == 1
-static const uint8_t  RING_RADII[]  = {78};
+static const uint8_t  RING_RADII[]  = {70};
 static const uint8_t  RING_STROKE   = 5;
 static const uint32_t RING_COLORS[] = {RING_COLOR_P1};
 #define LAYER_NAME_Y    124
@@ -32,7 +32,7 @@ static const uint32_t RING_COLORS[] = {RING_COLOR_P1};
 #define LAYER_NAME_FONT CormorantGaramond_Regular_36
 
 #elif RING_PERIPHERAL_COUNT == 2
-static const uint8_t  RING_RADII[]  = {78, 62};
+static const uint8_t  RING_RADII[]  = {70, 55};
 static const uint8_t  RING_STROKE   = 4;
 static const uint32_t RING_COLORS[] = {RING_COLOR_P1, RING_COLOR_P2};
 #define LAYER_NAME_Y    124
@@ -40,7 +40,7 @@ static const uint32_t RING_COLORS[] = {RING_COLOR_P1, RING_COLOR_P2};
 #define BATT_ROW_Y      (BATT_VAL_Y + 10)
 #define LAYER_NAME_FONT CormorantGaramond_Regular_36
 #else
-static const uint8_t  RING_RADII[]  = {78, 64, 50};
+static const uint8_t  RING_RADII[]  = {70, 57, 44};
 static const uint8_t  RING_STROKE   = 4;
 static const uint32_t RING_COLORS[] = {RING_COLOR_P1, RING_COLOR_P2, RING_COLOR_P3};
 #define LAYER_NAME_Y    127

@@ -158,3 +158,13 @@ config PROSPECTOR_RING_DARK_TOGGLE_TOUCH
       When enabled, double-tapping the display toggles the RING layout
       between light and dark theme. Requires CST816S touch controller
       to be present and configured in the devicetree.
+
+config PROSPECTOR_RING_GESTURE_NAV
+    bool "Enable swipe gesture navigation (Bootloader/Brightness pages)"
+    default n
+    depends on PROSPECTOR_STATUS_SCREEN_RING
+    depends on PROSPECTOR_RING_DARK_TOGGLE_TOUCH
+    help
+      When enabled, left-swipe shows a Bootloader confirmation page and
+      right-swipe shows a Brightness adjustment page. Requires CST816S
+      touch controller (PROSPECTOR_RING_DARK_TOGGLE_TOUCH).

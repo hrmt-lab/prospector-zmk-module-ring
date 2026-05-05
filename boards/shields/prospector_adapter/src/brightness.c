@@ -292,3 +292,7 @@ void prospector_brightness_adjust_user_level(int8_t delta) {
 
     prospector_brightness_set_user_level((uint8_t)level);
 }
+
+uint8_t prospector_brightness_get_user_level(void) {
+    return user_brightness;
+}
