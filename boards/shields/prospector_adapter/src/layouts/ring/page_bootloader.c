@@ -4,6 +4,7 @@
 #include "display_colors.h"
 
 #include <lvgl.h>
+#include <zephyr/retention/bootmode.h>
 #include <zephyr/sys/reboot.h>
 
 /* ── Stored objects for theme reapply ──────────────────────────────────── */
@@ -135,7 +136,10 @@ void ring_page_bootloader_apply_theme(void) {
 
 static void do_bootloader_async(void *data) {
     ARG_UNUSED(data);
-    sys_reboot(BOOT_TYPE_BOOTLOADER);
+
+    if (bootmode_set(BOOT_MODE_TYPE_BOOTLOADER) == 0) {
+        sys_reboot(SYS_REBOOT_WARM);
+    }
 }
 
 void ring_page_bootloader_handle_tap(int16_t x) {
