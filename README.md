@@ -30,7 +30,8 @@
 - Caps Word インジケーター
 - IME 状態インジケーター（変換キーで ON、無変換キーで OFF）
 - 打鍵カウンター
-- タップでライト / ダークテーマ切り替え（CST816S タッチパネル搭載機）
+- ダブルタップでライト / ダークテーマ切り替え（CST816S タッチパネル搭載機）
+- スワイプジェスチャーナビゲーション — 左から右で Bootloader 確認画面、右から左で輝度調整画面（CST816S タッチパネル搭載機、オプション）
 
 ## インストール
 
@@ -122,6 +123,19 @@ keymap {
 
 CST816S タッチパネルを搭載した Prospector ドングルでは、`CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y` を有効にすることで画面をダブルタップしてライトテーマとダークテーマを切り替えられます。
 
+**ジェスチャーナビゲーション**
+
+`CONFIG_PROSPECTOR_RING_GESTURE_NAV=y` を有効にすると、スワイプで追加画面に移動できます。ダブルタップによるテーマ切り替えとは独立して有効化できます:
+
+| ジェスチャー | 動作 |
+|---|---|
+| 左から右へスワイプ | Bootloader 確認画面（Flash / Cancel） |
+| Bootloader 画面で右から左へスワイプ | メイン画面へ戻る |
+| 右から左へスワイプ | 輝度調整画面（左半分タップで -10%、右半分タップで +10%） |
+| 輝度調整画面で左から右へスワイプ | メイン画面へ戻る |
+
+画面下部のページドット（3点）で現在の画面位置を確認できます。
+
 ## 設定
 
 `.conf` ファイルに設定を追加してカスタマイズできます:
@@ -162,6 +176,12 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | ディスプレイのダブルタップでライト/ダークテーマを切り替え（CST816S タッチコントローラー必須） | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEY` | キーコードでライト/ダークテーマを切り替え | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEYCODE` | テーマ切り替えキーコード（`DARK_TOGGLE_KEY` 有効時） | 111 (F20) |
+
+### RING ジェスチャーナビゲーション
+
+| 名前 | 説明 | デフォルト |
+| ---- | --- | --------- |
+| `CONFIG_PROSPECTOR_RING_GESTURE_NAV` | スワイプナビゲーションを有効化（CST816S タッチコントローラー必須。`DARK_TOGGLE_TOUCH` とは独立） | n |
 
 ## トラブルシューティング
 
@@ -227,7 +247,8 @@ RING is one of the original layouts from the Prospector ZMK Module by carrefinho
 - Caps Word indicator
 - IME state indicator (INTERNATIONAL4 = ON, INTERNATIONAL5 = OFF)
 - Keystroke counter
-- Tap to toggle light / dark theme (CST816S touch panel)
+- Double-tap to toggle light / dark theme (CST816S touch panel)
+- Swipe gesture navigation — left-to-right for Bootloader confirmation, right-to-left for Brightness adjustment (CST816S touch panel, optional)
 
 ## Installation
 
@@ -319,6 +340,19 @@ keymap {
 
 On Prospector dongles with a CST816S touch panel, enable `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y` to toggle between light and dark themes by double-tapping the display.
 
+**Gesture navigation**
+
+Enable `CONFIG_PROSPECTOR_RING_GESTURE_NAV=y` to navigate between screens with swipe gestures. This can be enabled independently from double-tap theme switching:
+
+| Gesture | Action |
+|---|---|
+| Swipe left-to-right | Bootloader confirmation screen (Flash / Cancel) |
+| Swipe right-to-left on Bootloader | Return to Main |
+| Swipe right-to-left | Brightness adjustment screen (tap left half −10%, right half +10%) |
+| Swipe left-to-right on Brightness | Return to Main |
+
+Three page-indicator dots at the bottom of the display show the current screen.
+
 ## Configuration
 
 Customize by adding config options to your `.conf` file:
@@ -359,6 +393,12 @@ When brightness key control is enabled, assign keys that emit the configured key
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | Toggle light/dark theme by double-tapping the display (requires CST816S touch controller) | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEY` | Toggle light/dark theme via keycode | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEYCODE` | Keycode for toggling theme (when `DARK_TOGGLE_KEY` is enabled) | 111 (F20) |
+
+### RING Gesture Navigation
+
+| Name | Description | Default |
+| ---- | ----------- | ------- |
+| `CONFIG_PROSPECTOR_RING_GESTURE_NAV` | Enable swipe navigation (requires CST816S touch controller; independent from `DARK_TOGGLE_TOUCH`) | n |
 
 ## Troubleshooting
 
