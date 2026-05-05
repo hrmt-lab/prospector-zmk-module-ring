@@ -21,6 +21,11 @@ static lv_obj_t *s_btn_flash_l  = NULL;
 /* Screen center X for landscape display (≈140 for 280-wide screen). */
 #define SCR_CX 135
 #define SCR_W  270
+#define BTN_Y 136
+#define BTN_H 30
+#define BTN_CANCEL_X 20
+#define BTN_FLASH_X 142
+#define BTN_W 108
 
 static lv_obj_t *make_button(lv_obj_t *parent, int16_t x, int16_t y,
                               int16_t w, int16_t h) {
@@ -142,12 +147,15 @@ static void do_bootloader_async(void *data) {
     }
 }
 
-void ring_page_bootloader_handle_tap(int16_t x) {
-    if (x >= SCR_CX) {
-        /* Right half: Flash */
+static bool point_in_rect(int16_t x, int16_t y, int16_t rx, int16_t ry,
+                          int16_t rw, int16_t rh) {
+    return x >= rx && x < (rx + rw) && y >= ry && y < (ry + rh);
+}
+
+void ring_page_bootloader_handle_tap(int16_t x, int16_t y) {
+    if (point_in_rect(x, y, BTN_FLASH_X, BTN_Y, BTN_W, BTN_H)) {
         lv_async_call(do_bootloader_async, NULL);
-    } else {
-        /* Left half: Cancel → back to main */
+    } else if (point_in_rect(x, y, BTN_CANCEL_X, BTN_Y, BTN_W, BTN_H)) {
         ring_nav_swipe_left();
     }
 }

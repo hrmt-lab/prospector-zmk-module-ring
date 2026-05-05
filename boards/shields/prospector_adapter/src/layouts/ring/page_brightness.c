@@ -83,7 +83,7 @@ void ring_page_brightness_init(lv_obj_t *parent) {
 
     /* Hint label */
     s_hint = lv_label_create(parent);
-    lv_label_set_text(s_hint, "< tap to adjust >");
+    lv_label_set_text(s_hint, "< tap left/right >");
     lv_obj_set_style_text_font(s_hint, &lv_font_montserrat_12, LV_PART_MAIN);
     lv_obj_set_style_text_color(s_hint,
         lv_color_hex(ring_color_subtext()), LV_PART_MAIN);

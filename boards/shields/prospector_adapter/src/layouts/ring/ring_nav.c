@@ -138,6 +138,14 @@ lv_obj_t *ring_nav_get_brightness_page(void)  { return s_page_brightness;  }
 ring_page_t ring_nav_get_page(void)           { return s_current_page;    }
 
 void ring_nav_swipe_left(void) {
+    if (s_current_page == RING_PAGE_BOOTLOADER) {
+        go_to_page(RING_PAGE_MAIN);
+    } else if (s_current_page == RING_PAGE_MAIN) {
+        go_to_page(RING_PAGE_BRIGHTNESS);
+    }
+}
+
+void ring_nav_swipe_right(void) {
     if (s_current_page == RING_PAGE_MAIN) {
         go_to_page(RING_PAGE_BOOTLOADER);
     } else if (s_current_page == RING_PAGE_BRIGHTNESS) {
@@ -145,16 +153,9 @@ void ring_nav_swipe_left(void) {
     }
 }
 
-void ring_nav_swipe_right(void) {
-    if (s_current_page == RING_PAGE_MAIN) {
-        go_to_page(RING_PAGE_BRIGHTNESS);
-    }
-}
-
 void ring_nav_handle_tap(int16_t x, int16_t y) {
-    ARG_UNUSED(y);
     if (s_current_page == RING_PAGE_BOOTLOADER) {
-        ring_page_bootloader_handle_tap(x);
+        ring_page_bootloader_handle_tap(x, y);
     } else if (s_current_page == RING_PAGE_BRIGHTNESS) {
         ring_page_brightness_handle_tap(x);
     }
