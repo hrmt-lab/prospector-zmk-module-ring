@@ -41,12 +41,12 @@ if(CONFIG_SHIELD_PROSPECTOR_ADAPTER)
     list(FILTER layout_sources EXCLUDE REGEX "status_screen\\.c$")
     # ring_touch.c requires CST816S; included separately below.
     list(FILTER layout_sources EXCLUDE REGEX "ring_touch\\.c$")
-    # Gesture nav files require DARK_TOGGLE_TOUCH; included separately below.
+    # Gesture nav files require touch support; included separately below.
     list(FILTER layout_sources EXCLUDE REGEX "ring_nav\\.c$")
     list(FILTER layout_sources EXCLUDE REGEX "page_bootloader\\.c$")
     list(FILTER layout_sources EXCLUDE REGEX "page_brightness\\.c$")
     zephyr_library_sources(${layout_sources})
-    if(CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH)
+    if(CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH OR CONFIG_PROSPECTOR_RING_GESTURE_NAV)
       zephyr_library_sources(src/layouts/ring/ring_touch.c)
     endif()
     if(CONFIG_PROSPECTOR_RING_GESTURE_NAV)

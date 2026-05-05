@@ -163,8 +163,11 @@ config PROSPECTOR_RING_GESTURE_NAV
     bool "Enable swipe gesture navigation (Bootloader/Brightness pages)"
     default n
     depends on PROSPECTOR_STATUS_SCREEN_RING
-    depends on PROSPECTOR_RING_DARK_TOGGLE_TOUCH
+    select INPUT
+    select INPUT_CST816S
+    select INPUT_CST816S_INTERRUPT
+    select INPUT_CST816S_EV_DEVICE
     help
       When enabled, left-swipe shows a Bootloader confirmation page and
       right-swipe shows a Brightness adjustment page. Requires CST816S
-      touch controller (PROSPECTOR_RING_DARK_TOGGLE_TOUCH).
+      touch controller to be present and configured in the devicetree.

@@ -191,7 +191,9 @@ static void touch_input_cb(struct input_event *evt, void *user_data) {
 
     switch (evt->code) {
     case CST816S_GESTURE_CODE_DOUBLE_CLICK:
+#ifdef CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH
         ring_theme_toggle();
+#endif
         break;
 #ifdef CONFIG_PROSPECTOR_RING_GESTURE_NAV
     case CST816S_GESTURE_CODE_SWIPE_LEFT:
