@@ -46,7 +46,7 @@ void ring_page_brightness_init(lv_obj_t *parent) {
     /* Header label */
     s_header = lv_label_create(parent);
     lv_label_set_text(s_header, "BRIGHTNESS");
-    lv_obj_set_style_text_font(s_header, &lv_font_montserrat_10, LV_PART_MAIN);
+    lv_obj_set_style_text_font(s_header, &lv_font_montserrat_12, LV_PART_MAIN);
     lv_obj_set_style_text_color(s_header,
         lv_color_hex(ring_color_text_sec()), LV_PART_MAIN);
     lv_obj_set_style_text_letter_space(s_header, 2, LV_PART_MAIN);
@@ -84,7 +84,7 @@ void ring_page_brightness_init(lv_obj_t *parent) {
     /* Hint label */
     s_hint = lv_label_create(parent);
     lv_label_set_text(s_hint, "< tap to adjust >");
-    lv_obj_set_style_text_font(s_hint, &lv_font_montserrat_10, LV_PART_MAIN);
+    lv_obj_set_style_text_font(s_hint, &lv_font_montserrat_12, LV_PART_MAIN);
     lv_obj_set_style_text_color(s_hint,
         lv_color_hex(ring_color_subtext()), LV_PART_MAIN);
     lv_obj_set_style_text_align(s_hint, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);

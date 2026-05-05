@@ -69,7 +69,7 @@ void ring_page_bootloader_init(lv_obj_t *parent) {
     /* Subtitle */
     s_subtitle = lv_label_create(parent);
     lv_label_set_text(s_subtitle, "Keyboard will disconnect.");
-    lv_obj_set_style_text_font(s_subtitle, &lv_font_montserrat_10, LV_PART_MAIN);
+    lv_obj_set_style_text_font(s_subtitle, &lv_font_montserrat_12, LV_PART_MAIN);
     lv_obj_set_style_text_color(s_subtitle,
         lv_color_hex(ring_color_text_sec()), LV_PART_MAIN);
     lv_obj_set_style_text_align(s_subtitle, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
