@@ -11,7 +11,7 @@ typedef enum {
 } ring_page_t;
 
 /* Call from zmk_display_status_screen() after creating page_main container.
- * Creates bootloader/brightness containers and page-dot indicators on screen. */
+ * Creates subpage containers and page-dot indicators on screen. */
 void ring_nav_init(lv_obj_t *screen, lv_obj_t *page_main);
 
 lv_obj_t *ring_nav_get_bootloader_page(void);

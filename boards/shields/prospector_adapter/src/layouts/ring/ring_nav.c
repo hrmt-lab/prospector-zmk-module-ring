@@ -15,14 +15,13 @@ static lv_obj_t     *s_page_brightness = NULL;
 
 /* Page indicator dots — on screen level, shared across pages.
  * Index: 0=Bootloader, 1=Main, 2=Brightness */
-static lv_obj_t *s_dots[3] = {NULL, NULL, NULL};
+#define PAGE_COUNT 3
+static lv_obj_t *s_dots[PAGE_COUNT] = {NULL, NULL, NULL};
 
-/* Page-dot layout: centered at RING_CENTER_X=96, y just below ring bottom.
- * With outer radius 70 and center_y 124: ring bottom = 194, dots at y=204. */
+/* Page-dot layout: centered just below the battery rings. */
 #define DOT_CY        204
-#define DOT_CX_BOOT   80
-#define DOT_CX_MAIN   96
-#define DOT_CX_BRIGHT 112
+#define DOT_CENTER_X  90
+#define DOT_SPACING   12
 #define DOT_R_ACTIVE  4
 #define DOT_R_INACTIVE 3
 
@@ -56,22 +55,34 @@ static lv_obj_t *make_dot(lv_obj_t *screen, int16_t cx, int16_t cy, uint8_t r,
 }
 
 static void update_dots(void) {
-    /* dot indices: 0=boot, 1=main, 2=bright */
-    static const ring_page_t dot_page[3] = {
+    static const ring_page_t dot_page[PAGE_COUNT] = {
         RING_PAGE_BOOTLOADER, RING_PAGE_MAIN, RING_PAGE_BRIGHTNESS
     };
-    static const int16_t dot_cx[3] = {DOT_CX_BOOT, DOT_CX_MAIN, DOT_CX_BRIGHT};
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < PAGE_COUNT; i++) {
         if (!s_dots[i]) continue;
         bool active = (dot_page[i] == s_current_page);
         uint8_t r  = active ? DOT_R_ACTIVE : DOT_R_INACTIVE;
         uint32_t c = active ? ring_color_page_dot_active() : ring_color_page_dot_inactive();
+        int16_t cx = DOT_CENTER_X + ((2 * i + 1 - PAGE_COUNT) * DOT_SPACING) / 2;
 
         /* Resize by repositioning with new radius */
         lv_obj_set_size(s_dots[i], r * 2, r * 2);
-        lv_obj_set_pos(s_dots[i], dot_cx[i] - r, DOT_CY - r);
+        lv_obj_set_pos(s_dots[i], cx - r, DOT_CY - r);
         lv_obj_set_style_bg_color(s_dots[i], lv_color_hex(c), LV_PART_MAIN);
+    }
+}
+
+static lv_obj_t *page_obj_for(ring_page_t page) {
+    switch (page) {
+    case RING_PAGE_BOOTLOADER:
+        return s_page_bootloader;
+    case RING_PAGE_MAIN:
+        return s_page_main;
+    case RING_PAGE_BRIGHTNESS:
+        return s_page_brightness;
+    default:
+        return NULL;
     }
 }
 
@@ -90,17 +101,13 @@ static void do_page_switch_async(void *data) {
     }
 
     /* Hide current page */
-    lv_obj_t *cur = (s_current_page == RING_PAGE_MAIN)       ? s_page_main
-                  : (s_current_page == RING_PAGE_BOOTLOADER)  ? s_page_bootloader
-                                                              : s_page_brightness;
+    lv_obj_t *cur = page_obj_for(s_current_page);
     if (cur) lv_obj_add_flag(cur, LV_OBJ_FLAG_HIDDEN);
 
     s_current_page = target;
 
     /* Show new page */
-    lv_obj_t *nxt = (target == RING_PAGE_MAIN)       ? s_page_main
-                  : (target == RING_PAGE_BOOTLOADER)  ? s_page_bootloader
-                                                     : s_page_brightness;
+    lv_obj_t *nxt = page_obj_for(target);
     if (nxt) lv_obj_remove_flag(nxt, LV_OBJ_FLAG_HIDDEN);
 
     update_dots();
@@ -123,12 +130,17 @@ void ring_nav_init(lv_obj_t *screen, lv_obj_t *page_main) {
     lv_obj_add_flag(s_page_brightness, LV_OBJ_FLAG_HIDDEN);
 
     /* Page dots sit directly on screen so they're always visible */
-    s_dots[0] = make_dot(screen, DOT_CX_BOOT,   DOT_CY, DOT_R_INACTIVE,
-                          ring_color_page_dot_inactive());
-    s_dots[1] = make_dot(screen, DOT_CX_MAIN,   DOT_CY, DOT_R_ACTIVE,
-                          ring_color_page_dot_active());
-    s_dots[2] = make_dot(screen, DOT_CX_BRIGHT, DOT_CY, DOT_R_INACTIVE,
-                          ring_color_page_dot_inactive());
+    static const ring_page_t dot_page[PAGE_COUNT] = {
+        RING_PAGE_BOOTLOADER, RING_PAGE_MAIN, RING_PAGE_BRIGHTNESS
+    };
+    for (int i = 0; i < PAGE_COUNT; i++) {
+        int16_t cx = DOT_CENTER_X + ((2 * i + 1 - PAGE_COUNT) * DOT_SPACING) / 2;
+        bool active = (dot_page[i] == RING_PAGE_MAIN);
+        s_dots[i] = make_dot(screen, cx, DOT_CY,
+                             active ? DOT_R_ACTIVE : DOT_R_INACTIVE,
+                             active ? ring_color_page_dot_active()
+                                    : ring_color_page_dot_inactive());
+    }
 
     s_current_page = RING_PAGE_MAIN;
 }
