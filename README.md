@@ -4,6 +4,7 @@
 このブランチはオリジナル Prospector ZMK Module をベースにしており、独自の **RING** レイアウトを追加しています。
 
 ![RING レイアウト](docs/images/00_main_1-2-3peripheral_light.png)
+![RING レイアウト ダークテーマ](docs/images/07_main_2peripheral_dark_on.png)
 
 > [!IMPORTANT]
 > このブランチは開発中です。ZMK の Zephyr 4.1 ベースバージョン（現在の main）にのみ対応しています。
