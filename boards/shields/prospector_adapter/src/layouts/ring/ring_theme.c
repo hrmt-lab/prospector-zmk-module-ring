@@ -10,8 +10,9 @@
 #endif
 
 #include "battery_rings.h"
+#include "keys_info.h"
 #include "modifier_chips.h"
-#include "output_info.h"
+#include "uptime_info.h"
 #if IS_ENABLED(CONFIG_PROSPECTOR_RING_GESTURE_NAV)
 #include "ring_nav.h"
 #include "page_bootloader.h"
@@ -32,8 +33,9 @@ bool ring_theme_is_dark(void) { return ring_dark_mode; }
 void ring_theme_apply_all(void) {
     ring_status_screen_apply_theme();
     ring_battery_rings_apply_theme();
+    ring_keys_info_apply_theme();
     ring_modifier_chips_apply_theme();
-    ring_output_info_apply_theme();
+    ring_uptime_info_apply_theme();
 #if IS_ENABLED(CONFIG_PROSPECTOR_RING_GESTURE_NAV)
     ring_nav_apply_theme();
     ring_page_bootloader_apply_theme();

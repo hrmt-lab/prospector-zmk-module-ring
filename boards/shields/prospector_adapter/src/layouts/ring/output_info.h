@@ -1,5 +1,14 @@
 #pragma once
 
+/* Legacy RING output panel.
+ *
+ * This widget used to render OUT (USB/BLE), BLE profile, dongle battery,
+ * and KEYS in one block. RING currently omits OUT/BLE/dongle-battery for a
+ * simpler USB-first layout; KEYS/LAST live in keys_info.c instead.
+ * The file is intentionally kept for possible future reference/revival, but
+ * output_info.c is excluded from the RING build in CMakeLists.txt.
+ */
+
 #include <lvgl.h>
 #include <zephyr/kernel.h>
 

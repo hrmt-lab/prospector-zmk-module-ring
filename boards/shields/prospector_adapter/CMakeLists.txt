@@ -43,6 +43,9 @@ if(CONFIG_SHIELD_PROSPECTOR_ADAPTER)
     list(FILTER layout_sources EXCLUDE REGEX "ring_touch\\.c$")
     # Gesture nav files require touch support; included separately below.
     list(FILTER layout_sources EXCLUDE REGEX "ring_nav\\.c$")
+    # Legacy OUT/BLE/dongle-battery panel is kept in source for reference,
+    # but RING now uses keys_info.c for KEYS/LAST and omits output_info.c.
+    list(FILTER layout_sources EXCLUDE REGEX "output_info\\.c$")
     list(FILTER layout_sources EXCLUDE REGEX "page_bootloader\\.c$")
     list(FILTER layout_sources EXCLUDE REGEX "page_brightness\\.c$")
     zephyr_library_sources(${layout_sources})

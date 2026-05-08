@@ -1,8 +1,9 @@
 #include <lvgl.h>
 
 #include "battery_rings.h"
+#include "keys_info.h"
 #include "modifier_chips.h"
-#include "output_info.h"
+#include "uptime_info.h"
 #include "display_colors.h"
 #include "ring_theme.h"
 #if IS_ENABLED(CONFIG_PROSPECTOR_RING_GESTURE_NAV)
@@ -12,8 +13,9 @@
 #endif
 
 static struct zmk_widget_battery_rings battery_rings_widget;
+static struct zmk_widget_keys_info keys_info_widget;
 static struct zmk_widget_modifier_chips modifier_chips_widget;
-static struct zmk_widget_output_info    output_info_widget;
+static struct zmk_widget_uptime_info uptime_info_widget;
 
 /* Screen-level objects stored for theme reapply. */
 static lv_obj_t *s_screen   = NULL;
@@ -69,9 +71,10 @@ lv_obj_t *zmk_display_status_screen(void) {
     lv_obj_set_style_pad_all(divider, 0, LV_PART_MAIN);
 
     // Widgets
+    zmk_widget_uptime_info_init(&uptime_info_widget, screen);
     zmk_widget_battery_rings_init(&battery_rings_widget, content);
     zmk_widget_modifier_chips_init(&modifier_chips_widget, content);
-    zmk_widget_output_info_init(&output_info_widget, content);
+    zmk_widget_keys_info_init(&keys_info_widget, content);
 
 #if IS_ENABLED(CONFIG_PROSPECTOR_RING_GESTURE_NAV)
     ring_nav_init(screen, page_main);

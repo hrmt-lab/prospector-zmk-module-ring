@@ -1,5 +1,9 @@
 #include "output_info.h"
 
+/* See output_info.h. This legacy widget is intentionally excluded from the
+ * current RING build; KEYS/LAST are provided by keys_info.c.
+ */
+
 #include <zmk/display.h>
 #include <zmk/events/battery_state_changed.h>
 #include <zmk/events/endpoint_changed.h>

@@ -171,3 +171,12 @@ config PROSPECTOR_RING_GESTURE_NAV
       When enabled, left-swipe shows a Bootloader confirmation page and
       right-swipe shows a Brightness adjustment page. Requires CST816S
       touch controller to be present and configured in the devicetree.
+
+config PROSPECTOR_RING_LAST_KEY_DISPLAY
+    bool "Display last emitted HID key on RING layout"
+    default y
+    depends on PROSPECTOR_STATUS_SCREEN_RING
+    help
+      When enabled, the RING layout shows the last emitted HID keycode
+      between the STATE chips and KEYS counter. This is intended as a
+      lightweight, optional debugging/visual feedback panel.
