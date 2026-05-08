@@ -25,11 +25,12 @@
 - 同心円バッテリーリング（ペリフェラル数 1〜3 に自動対応）
 - レイヤー名表示
 - ペリフェラルバッテリー残量表示
-- BLE プロファイル番号 / USB 出力表示
 - CTRL / SHFT / ALT / GUI モディファイアチップ（押下時ハイライト）
 - Caps Word インジケーター
 - IME 状態インジケーター（変換キーで ON、無変換キーで OFF）
 - 打鍵カウンター
+- 最後に送出された HID キー表示（`LAST`、オプション）
+- 起動後経過時間表示（`UP`、60 秒ごとに更新）
 - ダブルタップでライト / ダークテーマ切り替え（CST816S タッチパネル搭載機）
 - スワイプジェスチャーナビゲーション — 左から右で Bootloader 確認画面、右から左で輝度調整画面（CST816S タッチパネル搭載機、オプション）
 
@@ -89,11 +90,13 @@ CONFIG_PROSPECTOR_STATUS_SCREEN_RING=y
 
 **右パネル — 状態表示**
 
-- ドングルバッテリー残量（BLE 接続時のみ）
+- 右上の起動後経過時間（`UP  0:12`、60 秒ごとに更新）
 - CTRL / SHFT / ALT / GUI モディファイアチップ
 - CAPS / IME 状態チップ
-- 出力エンドポイント（BLE プロファイル番号または USB）
+- 最後に送出された HID キー（`LAST`、`CONFIG_PROSPECTOR_RING_LAST_KEY_DISPLAY` で無効化可能）
 - 打鍵カウンター
+
+RING は USB ドングル利用を主目的としているため、現在の RING 画面では出力先（USB/BLE）表示と BLE 時のドングルバッテリー表示は表示しません。
 
 IME 状態は `INTERNATIONAL4`（変換）キーで ON、`INTERNATIONAL5`（無変換）キーで OFF になります。
 
@@ -134,7 +137,7 @@ CST816S タッチパネルを搭載した Prospector ドングルでは、`CONFI
 | 右から左へスワイプ | 輝度調整画面（左半分タップで -10%、右半分タップで +10%） |
 | 輝度調整画面で左から右へスワイプ | メイン画面へ戻る |
 
-画面下部のページドット（3点）で現在の画面位置を確認できます。
+画面下部のページドット（3点）で現在の画面位置を確認できます。現在位置のドットはモディファイアチップの ON 状態と同じアクセント色で表示され、バッテリーリングの中心に揃えています。
 
 ## 設定
 
@@ -176,6 +179,14 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | ディスプレイのダブルタップでライト/ダークテーマを切り替え（CST816S タッチコントローラー必須） | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEY` | キーコードでライト/ダークテーマを切り替え | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEYCODE` | テーマ切り替えキーコード（`DARK_TOGGLE_KEY` 有効時） | 111 (F20) |
+
+### RING ステータス表示
+
+| 名前 | 説明 | デフォルト |
+| ---- | --- | --------- |
+| `CONFIG_PROSPECTOR_RING_LAST_KEY_DISPLAY` | `LAST` に最後に送出された HID キーを表示 | y |
+
+右上の `UP` 表示は CONFIG なしで常時有効です。起動後経過時間を 60 秒ごとに更新します。
 
 ### RING ジェスチャーナビゲーション
 
@@ -242,11 +253,12 @@ RING is one of the original layouts from the Prospector ZMK Module by carrefinho
 - Concentric battery arc rings (auto-adapts to 1–3 peripherals)
 - Active layer name display
 - Peripheral battery status
-- BLE profile number / USB output indicator
 - CTRL / SHFT / ALT / GUI modifier chips (highlight when pressed)
 - Caps Word indicator
 - IME state indicator (INTERNATIONAL4 = ON, INTERNATIONAL5 = OFF)
 - Keystroke counter
+- Last emitted HID key display (`LAST`, optional)
+- Uptime display (`UP`, updated every 60 seconds)
 - Double-tap to toggle light / dark theme (CST816S touch panel)
 - Swipe gesture navigation — left-to-right for Bootloader confirmation, right-to-left for Brightness adjustment (CST816S touch panel, optional)
 
@@ -306,11 +318,13 @@ The ring count and sizing adapt automatically to the peripheral count (`ZMK_SPLI
 
 **Right panel — Status indicators**
 
-- Dongle battery level (BLE only)
+- Uptime in the top-right corner (`UP  0:12`, updated every 60 seconds)
 - CTRL / SHFT / ALT / GUI modifier chips
 - CAPS / IME state chips
-- Active output endpoint (BLE profile number or USB)
+- Last emitted HID key (`LAST`, can be disabled with `CONFIG_PROSPECTOR_RING_LAST_KEY_DISPLAY`)
 - Keystroke counter
+
+RING is primarily designed for USB dongle use, so the current RING screen does not show the output endpoint (USB/BLE) or BLE-only dongle battery indicator.
 
 IME state is inferred from key events: `INTERNATIONAL4` (変換) sets IME on, `INTERNATIONAL5` (無変換) sets IME off.
 
@@ -351,7 +365,7 @@ Enable `CONFIG_PROSPECTOR_RING_GESTURE_NAV=y` to navigate between screens with s
 | Swipe right-to-left | Brightness adjustment screen (tap left half −10%, right half +10%) |
 | Swipe left-to-right on Brightness | Return to Main |
 
-Three page-indicator dots at the bottom of the display show the current screen.
+Three page-indicator dots at the bottom of the display show the current screen. The active dot uses the same accent color as active modifier chips and is centered with the battery rings.
 
 ## Configuration
 
@@ -393,6 +407,14 @@ When brightness key control is enabled, assign keys that emit the configured key
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | Toggle light/dark theme by double-tapping the display (requires CST816S touch controller) | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEY` | Toggle light/dark theme via keycode | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEYCODE` | Keycode for toggling theme (when `DARK_TOGGLE_KEY` is enabled) | 111 (F20) |
+
+### RING Status Indicators
+
+| Name | Description | Default |
+| ---- | ----------- | ------- |
+| `CONFIG_PROSPECTOR_RING_LAST_KEY_DISPLAY` | Show the last emitted HID key in the `LAST` field | y |
+
+The top-right `UP` uptime indicator is always enabled and updates every 60 seconds.
 
 ### RING Gesture Navigation
 
