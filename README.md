@@ -231,7 +231,7 @@ Copyright (c) 2024 carrefinho
 This is a [ZMK module](https://zmk.dev/docs/features/modules) that provides the **RING** custom status screen layout for the [Prospector](https://github.com/carrefinho/prospector) display dongle.
 RING is one of the original layouts from the Prospector ZMK Module by carrefinho.
 
-![RING layout light/dark theme](docs/images/mockup-dark.png)
+![RING layout light/dark theme](docs/images/00_main_1-2-3peripheral_light.png)
 
 > [!IMPORTANT]
 > This branch is a work-in-progress and is only compatible with the Zephyr 4.1 version of ZMK (current main).
