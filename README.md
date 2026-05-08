@@ -1,7 +1,7 @@
 # Prospector ZMK Module — RING レイアウト
 
-[Prospector](https://github.com/carrefinho/prospector) ディスプレイドングル向けカスタムステータス画面 ZMK モジュールです。
-本モジュールはオリジナル Prospector ZMK Module のレイアウトの 1 つである **RING** 専用の実装です。
+[Prospector](https://github.com/carrefinho/prospector) ディスプレイドングル向けのカスタムステータス画面 ZMK モジュールです。
+このブランチはオリジナル Prospector ZMK Module をベースにしており、独自の **RING** レイアウトを追加しています。
 
 ![RING レイアウト ライト/ダークテーマ](docs/images/mockup-dark.png)
 
