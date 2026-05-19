@@ -1,4 +1,4 @@
-# Prospector ZMK Module — RING レイアウト
+# Prospector ZMK Module — RING レイアウト(軽量版)
 
 [Prospector](https://github.com/carrefinho/prospector) ディスプレイドングル向けのカスタムステータス画面 ZMK モジュールです。
 このブランチはオリジナル Prospector ZMK Module をベースにしており、独自の **RING** レイアウトを追加しています。
@@ -229,13 +229,13 @@ Copyright (c) 2024 carrefinho
 
 ---
 
-# Prospector ZMK Module — RING Layout
+# Prospector ZMK Module — RING Layout(Lightweight)
 
 This is a [ZMK module](https://zmk.dev/docs/features/modules) that provides the **RING** custom status screen layout for the [Prospector](https://github.com/carrefinho/prospector) display dongle.
 RING is one of the original layouts from the Prospector ZMK Module by carrefinho.
 On `feat/ring-light`, RING uses a single main screen and handles touch actions directly on that screen.
 
-![RING layout light/dark theme](docs/images/00_main_1-2-3peripheral_light.png)
+<img src="docs/images/ring-light_2peri.png" width="280" alt="RING レイアウト" />
 
 > [!IMPORTANT]
 > This branch is a work-in-progress and is only compatible with the Zephyr 4.1 version of ZMK (current main).
