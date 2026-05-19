@@ -10,7 +10,7 @@ choice ZMK_DISPLAY_STATUS_SCREEN
     default ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
 endchoice
 
-rsource "src/layouts/*/Kconfig.defconfig"
+rsource "src/layouts/ring/Kconfig.defconfig"
 
 choice ZMK_DISPLAY_WORK_QUEUE
     default ZMK_DISPLAY_WORK_QUEUE_DEDICATED
