@@ -94,12 +94,12 @@ config PROSPECTOR_BRIGHTNESS_DOWN_KEYCODE
       HID keycode that decreases display brightness. The default is F23.
 
 config PROSPECTOR_BRIGHTNESS_STEP
-    int "Display brightness key adjustment step"
+    int "Display brightness adjustment step"
     default 10
     range 1 100
-    depends on PROSPECTOR_BRIGHTNESS_KEY_CONTROL
+    depends on PROSPECTOR_BRIGHTNESS_KEY_CONTROL || PROSPECTOR_RING_GESTURE_NAV
     help
-      Brightness percentage points to adjust per key press.
+      Brightness percentage points to adjust per key press or touch tap.
 
 config PROSPECTOR_LAYER_NAME_UPPERCASE
     bool "Display layer names in uppercase"
@@ -126,7 +126,7 @@ config PROSPECTOR_RING_DARK_TOGGLE_KEYCODE
       Default is F20 (111). Brightness keys use F23(114) and F24(115).
 
 config PROSPECTOR_RING_DARK_TOGGLE_TOUCH
-    bool "Toggle RING dark theme via display double-tap"
+    bool "Toggle RING dark theme via upward swipe"
     default n
     depends on PROSPECTOR_STATUS_SCREEN_RING
     select INPUT
@@ -134,12 +134,12 @@ config PROSPECTOR_RING_DARK_TOGGLE_TOUCH
     select INPUT_CST816S_INTERRUPT
     select INPUT_CST816S_EV_DEVICE
     help
-      When enabled, double-tapping the display toggles the RING layout
-      between light and dark theme. Requires CST816S touch controller
+      When enabled, swiping upward on the main screen toggles the RING
+      layout between light and dark theme. Requires CST816S touch controller
       to be present and configured in the devicetree.
 
 config PROSPECTOR_RING_GESTURE_NAV
-    bool "Enable swipe gesture navigation (Bootloader/Brightness pages)"
+    bool "Enable RING main-screen touch gestures"
     default n
     depends on PROSPECTOR_STATUS_SCREEN_RING
     select INPUT
@@ -147,9 +147,11 @@ config PROSPECTOR_RING_GESTURE_NAV
     select INPUT_CST816S_INTERRUPT
     select INPUT_CST816S_EV_DEVICE
     help
-      When enabled, left-swipe shows a Bootloader confirmation page and
-      right-swipe shows a Brightness adjustment page. Requires CST816S
-      touch controller to be present and configured in the devicetree.
+      When enabled, RING handles touch gestures directly on the main screen:
+      tap the left half to decrease brightness, tap the right half to increase
+      brightness, and swipe down then right within a short window to enter the
+      bootloader without a confirmation page. Requires CST816S touch controller
+      to be present and configured in the devicetree.
 
 config PROSPECTOR_RING_LAST_KEY_DISPLAY
     bool "Display last emitted HID key on RING layout"

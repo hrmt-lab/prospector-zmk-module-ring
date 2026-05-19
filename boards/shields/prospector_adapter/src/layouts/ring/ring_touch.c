@@ -1,14 +1,19 @@
 #include "ring_theme.h"
 
+#include "brightness_info.h"
+
 #include <zephyr/device.h>
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/input/input.h>
 #include <zephyr/kernel.h>
 #include <zephyr/dt-bindings/input/cst816s-gesture-codes.h>
 #include <zephyr/logging/log.h>
+#include <lvgl.h>
 
-#ifdef CONFIG_PROSPECTOR_RING_GESTURE_NAV
-#include "ring_nav.h"
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_GESTURE_NAV)
+#include <prospector_brightness.h>
+#include <zephyr/retention/bootmode.h>
+#include <zephyr/sys/reboot.h>
 #endif
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
@@ -60,18 +65,17 @@ static int ring_touch_init(void) {
 SYS_INIT(ring_touch_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
 /* Receive Zephyr input events from the CST816S driver. */
-#ifdef CONFIG_PROSPECTOR_RING_GESTURE_NAV
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_GESTURE_NAV)
 static int16_t s_touch_x = 0;
 static int16_t s_touch_y = 0;
 static int16_t s_current_x = 0;
-static int16_t s_current_y = 0;
-static int64_t s_last_swipe_ms = 0;
+static int64_t s_bootloader_armed_at_ms = -1;
 
 #define SCREEN_W 280
 #define SCREEN_H 240
 #define TOUCH_PHYS_W SCREEN_H
 #define TOUCH_PHYS_H SCREEN_W
-#define SWIPE_COOLDOWN_MS 350
+#define BOOTLOADER_SEQUENCE_TIMEOUT_MS 800
 
 static int16_t clamp_coord(int16_t value, int16_t max) {
     if (value < 0) {
@@ -99,10 +103,13 @@ static void touch_to_screen_point(int16_t *x, int16_t *y) {
 }
 
 static void update_current_screen_point(void) {
-    s_current_x = s_touch_x;
-    s_current_y = s_touch_y;
-    touch_to_screen_point(&s_current_x, &s_current_y);
+    int16_t x = s_touch_x;
+    int16_t y = s_touch_y;
+
+    touch_to_screen_point(&x, &y);
+    s_current_x = x;
 }
+#endif
 
 static uint16_t gesture_to_screen_direction(uint16_t gesture) {
 #ifdef CONFIG_PROSPECTOR_ROTATE_DISPLAY_180
@@ -136,28 +143,66 @@ static uint16_t gesture_to_screen_direction(uint16_t gesture) {
 #endif
 }
 
-static bool swipe_cooldown_active(void) {
-    int64_t now = k_uptime_get();
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_GESTURE_NAV)
+static void do_bootloader_async(void *data) {
+    ARG_UNUSED(data);
 
-    if ((now - s_last_swipe_ms) < SWIPE_COOLDOWN_MS) {
-        return true;
+    if (bootmode_set(BOOT_MODE_TYPE_BOOTLOADER) == 0) {
+        sys_reboot(SYS_REBOOT_WARM);
     }
-
-    s_last_swipe_ms = now;
-    return false;
 }
 
-static void handle_gesture_swipe(uint16_t gesture) {
-    if (swipe_cooldown_active()) {
+static void enter_bootloader(void) {
+    lv_async_call(do_bootloader_async, NULL);
+}
+
+static bool bootloader_sequence_active(int64_t now) {
+    return s_bootloader_armed_at_ms >= 0 &&
+           (now - s_bootloader_armed_at_ms) <= BOOTLOADER_SEQUENCE_TIMEOUT_MS;
+}
+
+static void arm_bootloader_sequence(void) {
+    s_bootloader_armed_at_ms = k_uptime_get();
+}
+
+static void clear_bootloader_sequence(void) {
+    s_bootloader_armed_at_ms = -1;
+}
+
+static void handle_main_tap(void) {
+    clear_bootloader_sequence();
+
+    if (s_current_x >= (SCREEN_W / 2)) {
+        prospector_brightness_adjust_user_level(CONFIG_PROSPECTOR_BRIGHTNESS_STEP);
+    } else {
+        prospector_brightness_adjust_user_level(-CONFIG_PROSPECTOR_BRIGHTNESS_STEP);
+    }
+    ring_brightness_info_refresh();
+}
+
+static void handle_main_swipe(uint16_t gesture) {
+    uint16_t direction = gesture_to_screen_direction(gesture);
+    int64_t now = k_uptime_get();
+
+    if (direction == CST816S_GESTURE_CODE_SWIPE_RIGHT &&
+        bootloader_sequence_active(now)) {
+        clear_bootloader_sequence();
+        enter_bootloader();
         return;
     }
 
-    switch (gesture_to_screen_direction(gesture)) {
-    case CST816S_GESTURE_CODE_SWIPE_LEFT:
-        ring_nav_swipe_left();
-        break;
-    case CST816S_GESTURE_CODE_SWIPE_RIGHT:
-        ring_nav_swipe_right();
+    if (direction == CST816S_GESTURE_CODE_SWIPE_DOWN) {
+        arm_bootloader_sequence();
+        return;
+    }
+
+    clear_bootloader_sequence();
+
+    switch (direction) {
+    case CST816S_GESTURE_CODE_SWIPE_UP:
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH)
+        ring_theme_toggle();
+#endif
         break;
     default:
         break;
@@ -168,7 +213,7 @@ static void handle_gesture_swipe(uint16_t gesture) {
 static void touch_input_cb(struct input_event *evt, void *user_data) {
     ARG_UNUSED(user_data);
 
-#ifdef CONFIG_PROSPECTOR_RING_GESTURE_NAV
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_GESTURE_NAV)
     if (evt->type == INPUT_EV_ABS) {
         if (evt->code == INPUT_ABS_X) {
             s_touch_x = (int16_t)evt->value;
@@ -190,20 +235,25 @@ static void touch_input_cb(struct input_event *evt, void *user_data) {
     }
 
     switch (evt->code) {
-    case CST816S_GESTURE_CODE_DOUBLE_CLICK:
-#ifdef CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH
-        ring_theme_toggle();
-#endif
-        break;
-#ifdef CONFIG_PROSPECTOR_RING_GESTURE_NAV
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_GESTURE_NAV)
     case CST816S_GESTURE_CODE_SWIPE_LEFT:
     case CST816S_GESTURE_CODE_SWIPE_RIGHT:
     case CST816S_GESTURE_CODE_SWIPE_UP:
     case CST816S_GESTURE_CODE_SWIPE_DOWN:
-        handle_gesture_swipe((uint16_t)evt->code);
+        handle_main_swipe((uint16_t)evt->code);
         break;
     case CST816S_GESTURE_CODE_SINGLE_CLICK:
-        ring_nav_handle_tap(s_current_x, s_current_y);
+        handle_main_tap();
+        break;
+#elif IS_ENABLED(CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH)
+    case CST816S_GESTURE_CODE_SWIPE_LEFT:
+    case CST816S_GESTURE_CODE_SWIPE_RIGHT:
+    case CST816S_GESTURE_CODE_SWIPE_UP:
+    case CST816S_GESTURE_CODE_SWIPE_DOWN:
+        if (gesture_to_screen_direction((uint16_t)evt->code) ==
+            CST816S_GESTURE_CODE_SWIPE_UP) {
+            ring_theme_toggle();
+        }
         break;
 #endif
     default:

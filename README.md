@@ -2,8 +2,9 @@
 
 [Prospector](https://github.com/carrefinho/prospector) ディスプレイドングル向けのカスタムステータス画面 ZMK モジュールです。
 このブランチはオリジナル Prospector ZMK Module をベースにしており、独自の **RING** レイアウトを追加しています。
+`feat/ring-light` では表示画面をメイン画面のみに整理し、タッチ操作もメイン画面上で直接実行します。
 
-![RING レイアウト](docs/images/00_main_1-2-3peripheral_light.png)
+<img src="docs/images/ring-light_2peri.png" width="280" alt="RING レイアウト" />
 
 > [!IMPORTANT]
 > このブランチは開発中です。ZMK の Zephyr 4.1 ベースバージョン（現在の main）にのみ対応しています。
@@ -31,8 +32,10 @@
 - 打鍵カウンター
 - 最後に送出された HID キー表示（`LAST`、オプション）
 - 起動後経過時間表示（`UP`、60 秒ごとに更新）
-- ダブルタップでライト / ダークテーマ切り替え（CST816S タッチパネル搭載機）
-- スワイプジェスチャーナビゲーション — 左から右で Bootloader 確認画面、右から左で輝度調整画面（CST816S タッチパネル搭載機、オプション）
+- 左下の輝度アイコン + 輝度パーセント表示
+- メイン画面の左右タップで輝度調整（CST816S タッチパネル搭載機、オプション）
+- 上スワイプでライト / ダークテーマ切り替え（CST816S タッチパネル搭載機）
+- 下スワイプ後、短時間内の右スワイプで Bootloader に入る（CST816S タッチパネル搭載機、オプション）
 
 ## インストール
 
@@ -54,7 +57,7 @@ manifest:
       import: app/west.yml
     - name: prospector-zmk-module-ring             # <--- 追加
       remote: hrmt-lab                             # <---
-      revision: main                               # <---
+      revision: feat/ring-light                    # <---
   self:
     path: config
 ```
@@ -87,6 +90,7 @@ CONFIG_PROSPECTOR_STATUS_SCREEN_RING=y
 - **1 ペリフェラル** — 幅広の 1 本リング、大きなレイヤー名
 - **2 ペリフェラル** — 2 本の同心円リング（デフォルト）
 - **3 ペリフェラル** — 3 本のリング、やや小さめのレイヤー名
+- 左下に現在の輝度を `%` 表示
 
 **右パネル — 状態表示**
 
@@ -124,20 +128,19 @@ keymap {
 
 **テーマ切り替え**
 
-CST816S タッチパネルを搭載した Prospector ドングルでは、`CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y` を有効にすることで画面をダブルタップしてライトテーマとダークテーマを切り替えられます。
+CST816S タッチパネルを搭載した Prospector ドングルでは、`CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y` を有効にすることで、メイン画面を下から上へスワイプしてライトテーマとダークテーマを切り替えられます。
 
-**ジェスチャーナビゲーション**
+**メイン画面タッチ操作**
 
-`CONFIG_PROSPECTOR_RING_GESTURE_NAV=y` を有効にすると、スワイプで追加画面に移動できます。ダブルタップによるテーマ切り替えとは独立して有効化できます:
+`CONFIG_PROSPECTOR_RING_GESTURE_NAV=y` を有効にすると、追加画面へ遷移せず、メイン画面上でタッチ操作を直接実行できます。テーマ切り替えとは独立して有効化できます:
 
-| ジェスチャー | 動作 |
+| 操作 | 動作 |
 |---|---|
-| 左から右へスワイプ | Bootloader 確認画面（Flash / Cancel） |
-| Bootloader 画面で右から左へスワイプ | メイン画面へ戻る |
-| 右から左へスワイプ | 輝度調整画面（左半分タップで -10%、右半分タップで +10%） |
-| 輝度調整画面で左から右へスワイプ | メイン画面へ戻る |
+| 画面左半分をタップ | 輝度を `CONFIG_PROSPECTOR_BRIGHTNESS_STEP` 下げる |
+| 画面右半分をタップ | 輝度を `CONFIG_PROSPECTOR_BRIGHTNESS_STEP` 上げる |
+| 下スワイプ後、短時間内に右スワイプ | 確認なしで Bootloader に入る |
 
-画面下部のページドット（3点）で現在の画面位置を確認できます。現在位置のドットはモディファイアチップの ON 状態と同じアクセント色で表示され、バッテリーリングの中心に揃えています。
+輝度を変更すると、左下の輝度パーセント表示も更新されます。Bootloader 操作は確認画面を表示せず、条件成立時にすぐ Bootloader に入ります。
 
 ## 設定
 
@@ -161,7 +164,7 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 | `CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL` | キーコードで輝度を調整 | n |
 | `CONFIG_PROSPECTOR_BRIGHTNESS_UP_KEYCODE` | 輝度アップのキーコード | 115 (F24) |
 | `CONFIG_PROSPECTOR_BRIGHTNESS_DOWN_KEYCODE` | 輝度ダウンのキーコード | 114 (F23) |
-| `CONFIG_PROSPECTOR_BRIGHTNESS_STEP` | 1 回のキー押下で変化する輝度 | 10 |
+| `CONFIG_PROSPECTOR_BRIGHTNESS_STEP` | 1 回のキー押下/タップで変化する輝度 | 10 |
 | `CONFIG_PROSPECTOR_LAYER_NAME_UPPERCASE` | レイヤー名を大文字に変換 | y |
 
 輝度キー制御を有効にした場合は、設定したキーコードを送出するキーをキーマップに割り当ててください。デフォルトは F24（輝度アップ）/ F23（輝度ダウン）です。
@@ -176,7 +179,7 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 
 | 名前 | 説明 | デフォルト |
 | ---- | --- | --------- |
-| `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | ディスプレイのダブルタップでライト/ダークテーマを切り替え（CST816S タッチコントローラー必須） | n |
+| `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | ディスプレイの上スワイプでライト/ダークテーマを切り替え（CST816S タッチコントローラー必須） | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEY` | キーコードでライト/ダークテーマを切り替え | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEYCODE` | テーマ切り替えキーコード（`DARK_TOGGLE_KEY` 有効時） | 111 (F20) |
 
@@ -188,11 +191,11 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 
 右上の `UP` 表示は CONFIG なしで常時有効です。起動後経過時間を 60 秒ごとに更新します。
 
-### RING ジェスチャーナビゲーション
+### RING メイン画面タッチ操作
 
 | 名前 | 説明 | デフォルト |
 | ---- | --- | --------- |
-| `CONFIG_PROSPECTOR_RING_GESTURE_NAV` | スワイプナビゲーションを有効化（CST816S タッチコントローラー必須。`DARK_TOGGLE_TOUCH` とは独立） | n |
+| `CONFIG_PROSPECTOR_RING_GESTURE_NAV` | メイン画面上のタッチ操作を有効化（CST816S タッチコントローラー必須。`DARK_TOGGLE_TOUCH` とは独立） | n |
 
 ## トラブルシューティング
 
@@ -230,6 +233,7 @@ Copyright (c) 2024 carrefinho
 
 This is a [ZMK module](https://zmk.dev/docs/features/modules) that provides the **RING** custom status screen layout for the [Prospector](https://github.com/carrefinho/prospector) display dongle.
 RING is one of the original layouts from the Prospector ZMK Module by carrefinho.
+On `feat/ring-light`, RING uses a single main screen and handles touch actions directly on that screen.
 
 ![RING layout light/dark theme](docs/images/00_main_1-2-3peripheral_light.png)
 
@@ -259,8 +263,10 @@ RING is one of the original layouts from the Prospector ZMK Module by carrefinho
 - Keystroke counter
 - Last emitted HID key display (`LAST`, optional)
 - Uptime display (`UP`, updated every 60 seconds)
-- Double-tap to toggle light / dark theme (CST816S touch panel)
-- Swipe gesture navigation — left-to-right for Bootloader confirmation, right-to-left for Brightness adjustment (CST816S touch panel, optional)
+- Brightness icon and percentage in the lower-left corner
+- Tap left/right halves of the main screen to adjust brightness (CST816S touch panel, optional)
+- Swipe up to toggle light / dark theme (CST816S touch panel)
+- Swipe down, then swipe right shortly after, to enter Bootloader (CST816S touch panel, optional)
 
 ## Installation
 
@@ -282,7 +288,7 @@ manifest:
       import: app/west.yml
     - name: prospector-zmk-module-ring             # <--- and these
       remote: hrmt-lab                             # <---
-      revision: main                               # <---
+      revision: feat/ring-light                    # <---
   self:
     path: config
 ```
@@ -315,6 +321,7 @@ The ring count and sizing adapt automatically to the peripheral count (`ZMK_SPLI
 - **1 peripheral** — single wide arc, large layer name
 - **2 peripherals** — two concentric arcs (default)
 - **3 peripherals** — three tighter arcs, slightly smaller layer name
+- Current brightness percentage in the lower-left corner
 
 **Right panel — Status indicators**
 
@@ -352,20 +359,19 @@ keymap {
 
 **Theme toggle**
 
-On Prospector dongles with a CST816S touch panel, enable `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y` to toggle between light and dark themes by double-tapping the display.
+On Prospector dongles with a CST816S touch panel, enable `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y` to toggle between light and dark themes by swiping up on the main screen.
 
-**Gesture navigation**
+**Main-screen touch actions**
 
-Enable `CONFIG_PROSPECTOR_RING_GESTURE_NAV=y` to navigate between screens with swipe gestures. This can be enabled independently from double-tap theme switching:
+Enable `CONFIG_PROSPECTOR_RING_GESTURE_NAV=y` to run touch actions directly on the main screen without navigating to additional screens. This can be enabled independently from touch theme switching:
 
-| Gesture | Action |
+| Action | Result |
 |---|---|
-| Swipe left-to-right | Bootloader confirmation screen (Flash / Cancel) |
-| Swipe right-to-left on Bootloader | Return to Main |
-| Swipe right-to-left | Brightness adjustment screen (tap left half −10%, right half +10%) |
-| Swipe left-to-right on Brightness | Return to Main |
+| Tap the left half | Decrease brightness by `CONFIG_PROSPECTOR_BRIGHTNESS_STEP` |
+| Tap the right half | Increase brightness by `CONFIG_PROSPECTOR_BRIGHTNESS_STEP` |
+| Swipe down, then swipe right shortly after | Enter Bootloader without confirmation |
 
-Three page-indicator dots at the bottom of the display show the current screen. The active dot uses the same accent color as active modifier chips and is centered with the battery rings.
+Brightness changes update the lower-left percentage display immediately. The Bootloader gesture does not show a confirmation screen; once the gesture sequence is accepted, the dongle enters Bootloader immediately.
 
 ## Configuration
 
@@ -389,7 +395,7 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 | `CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL` | Control display brightness with keycodes | n |
 | `CONFIG_PROSPECTOR_BRIGHTNESS_UP_KEYCODE` | Keycode for increasing display brightness | 115 (F24) |
 | `CONFIG_PROSPECTOR_BRIGHTNESS_DOWN_KEYCODE` | Keycode for decreasing display brightness | 114 (F23) |
-| `CONFIG_PROSPECTOR_BRIGHTNESS_STEP` | Brightness adjustment per key press | 10 |
+| `CONFIG_PROSPECTOR_BRIGHTNESS_STEP` | Brightness adjustment per key press or touch tap | 10 |
 | `CONFIG_PROSPECTOR_LAYER_NAME_UPPERCASE` | Convert layer names to uppercase | y |
 
 When brightness key control is enabled, assign keys that emit the configured keycodes in your keyboard keymap. The defaults follow YADS/dongle-screen: F24 increases brightness and F23 decreases brightness.
@@ -404,7 +410,7 @@ When brightness key control is enabled, assign keys that emit the configured key
 
 | Name | Description | Default |
 | ---- | ----------- | ------- |
-| `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | Toggle light/dark theme by double-tapping the display (requires CST816S touch controller) | n |
+| `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | Toggle light/dark theme by swiping up on the display (requires CST816S touch controller) | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEY` | Toggle light/dark theme via keycode | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEYCODE` | Keycode for toggling theme (when `DARK_TOGGLE_KEY` is enabled) | 111 (F20) |
 
@@ -416,11 +422,11 @@ When brightness key control is enabled, assign keys that emit the configured key
 
 The top-right `UP` uptime indicator is always enabled and updates every 60 seconds.
 
-### RING Gesture Navigation
+### RING Main-Screen Touch Actions
 
 | Name | Description | Default |
 | ---- | ----------- | ------- |
-| `CONFIG_PROSPECTOR_RING_GESTURE_NAV` | Enable swipe navigation (requires CST816S touch controller; independent from `DARK_TOGGLE_TOUCH`) | n |
+| `CONFIG_PROSPECTOR_RING_GESTURE_NAV` | Enable main-screen touch actions (requires CST816S touch controller; independent from `DARK_TOGGLE_TOUCH`) | n |
 
 ## Troubleshooting
 

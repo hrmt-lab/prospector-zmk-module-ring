@@ -8,7 +8,7 @@
 RING は Prospector ディスプレイドングル向けのステータス画面
 レイアウトです。280 x 240 の横長画面を前提に、分割キーボードの
 状態を同心円状のバッテリーリング、修飾キー表示、状態チップ、
-キー入力情報、任意のタッチ操作ページで表示します。
+キー入力情報、メイン画面上のタッチ操作で表示/制御します。
 
 有効化する CONFIG:
 
@@ -87,33 +87,16 @@ CONFIG_PROSPECTOR_STATUS_SCREEN_RING=y
 - `CONFIG_PROSPECTOR_LAYER_NAME_UPPERCASE=y` の場合は大文字に変換する。
 - 色は `ring_color_text_pri()`。
 
-### ページドット
+### 輝度表示
 
-ジェスチャーナビゲーション有効時に、バッテリーリング下部へ
-ページ位置を示すドットを表示する。
+メイン画面左下に現在のユーザー輝度を表示する。
 
-- ページ数は 3。
-- 中心 y は `204`。
-- 全体の中心 x は `96`。
-- ドット間隔は `12`。
-- 現在ページのドット半径は `4`。
-- 非現在ページのドット半径は `3`。
-- 現在ページの色は `RING_COLOR_ACCENT` (`0xE89B5C`)。
-- 非現在ページの色は `ring_color_page_dot_inactive()`。
-
-ページ順:
-
-```text
-Bootloader -> Main -> Brightness
-```
-
-表示位置:
-
-| ページ | ドット位置 |
-| --- | --- |
-| Bootloader | 左 |
-| Main | 中央 |
-| Brightness | 右 |
+- 位置はおおよそ `(18, 210)`。
+- 小さな丸い輝度アイコンと `NN%` ラベルを横並びで表示する。
+- 現在値は `prospector_brightness_get_user_level()` から取得する。
+- ラベル色は `ring_color_text_sec()`。
+- アイコンは `RING_COLOR_ACCENT`。
+- 左右タップで輝度を変更した直後に表示を更新する。
 
 ## サイド情報領域
 
@@ -198,41 +181,31 @@ CONFIG_PROSPECTOR_RING_LAST_KEY_DISPLAY=y
   - `1,000` から `99,999`。
   - それ以上は `99k+`。
 
-## ジェスチャーナビゲーション
+## メイン画面タッチ操作
 
-ジェスチャーナビゲーションは任意機能。
+メイン画面タッチ操作は任意機能。
 
 ```conf
 CONFIG_PROSPECTOR_RING_GESTURE_NAV=y
 ```
 
-有効時はメイン画面の表示要素を透明な `page_main` コンテナにまとめる。
-Bootloader 画面と Brightness 画面は非表示のフルスクリーンコンテナとして
-作成し、ページ遷移時に表示/非表示を切り替える。
-
-ページ切り替えは `lv_async_call()` 経由で実行し、LVGL オブジェクト更新を
-LVGL スレッド上で行う。
-
-### スワイプ動作
+### スワイプ/タップ動作
 
 この表のスワイプ方向は、画面上で見える指の移動方向を表す。
 
-| 現在ページ | 操作 | 遷移先 |
-| --- | --- | --- |
-| Main | 左から右へスワイプ | Bootloader |
-| Main | 右から左へスワイプ | Brightness |
-| Bootloader | 右から左へスワイプ | Main |
-| Brightness | 左から右へスワイプ | Main |
-| Bootloader | 左から右へスワイプ | 遷移しない |
-| Brightness | 右から左へスワイプ | 遷移しない |
+| 操作 | 動作 |
+| --- | --- |
+| 下スワイプ後、800 ms 以内に右スワイプ | Bootloader に入る |
+| 上スワイプ | テーマを切り替える |
+| 画面左半分をタップ | 輝度を `CONFIG_PROSPECTOR_BRIGHTNESS_STEP` 下げる |
+| 画面右半分をタップ | 輝度を `CONFIG_PROSPECTOR_BRIGHTNESS_STEP` 上げる |
 
 補足:
 
-- 隣接ページにだけ遷移する。
-- Bootloader から Brightness、Brightness から Bootloader へは直接遷移しない。
-- ページ端ではそれ以上スワイプしても遷移しない。
-- スワイプのクールダウンは 350 ms。
-- クールダウン中の追加スワイプイベントは無視する。
+- Bootloader は確認画面を持たず、条件成立時に即時 `BOOT_MODE_TYPE_BOOTLOADER`
+  をセットして warm reboot する。
+- 単独の下スワイプ、単独の右スワイプ、左スワイプでは Bootloader に入らない。
+- 輝度変更後は左下の輝度パーセント表示を更新する。
 
 ### タッチ座標と向き
 
@@ -255,65 +228,10 @@ LVGL スレッド上で行う。
 現在の実装は、現行のデフォルト向きと既存の 180 度回転 CONFIG 経路を
 対象にしている。
 
-## Bootloader 画面
-
-Bootloader 画面はジェスチャーナビゲーション有効時のみ使用する。
-
-表示内容:
-
-- `!` 入りのアクセント色の警告円。
-- タイトル `Enter Bootloader?`。
-- サブタイトル `Keyboard will disconnect.`。
-- 左ボタン `Cancel`。
-- 右ボタン `Flash`。
-
-ボタン配置:
-
-| ボタン | 位置 | サイズ | 動作 |
-| --- | --- | --- | --- |
-| Cancel | `(20, 136)` | `108 x 30` | Main に戻る |
-| Flash | `(142, 136)` | `108 x 30` | ブートローダーへ入る |
-
-Flash 動作:
-
-1. `bootmode_set(BOOT_MODE_TYPE_BOOTLOADER)` を呼ぶ。
-2. 成功した場合、`sys_reboot(SYS_REBOOT_WARM)` を呼ぶ。
-
-タップ判定は LVGL のボタンクリックではなく、RING のタッチハンドラ側で
-座標判定する。
-
-## Brightness 画面
-
-Brightness 画面はジェスチャーナビゲーション有効時のみ使用する。
-
-表示内容:
-
-- ヘッダー `BRIGHTNESS`。
-- 現在の輝度パーセント。
-- 8 個の輝度ドット。
-- ヒント `< tap left/right >`。
-
-輝度ドット:
-
-- ドット数は 8。
-- ドット間隔は 24。
-- y 位置は 120。
-- 点灯ドットは `RING_COLOR_ACCENT`。
-- 消灯ドットは `ring_color_track()`。
-
-タップ動作:
-
-| タップ位置 | 動作 |
-| --- | --- |
-| 画面左半分 | 輝度を 10 下げる |
-| 画面右半分 | 輝度を 10 上げる |
-
-輝度 API:
+### 輝度 API
 
 - 現在値取得: `prospector_brightness_get_user_level()`。
 - 値変更: `prospector_brightness_adjust_user_level()`。
-
-Brightness 画面へ入るときは、現在の輝度値に表示を同期する。
 
 ## テーマ
 
@@ -340,7 +258,7 @@ CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y
 
 - キー切り替えは、設定された HID キーコードが press されたときに行う。
 - デフォルトキーコードは `111`、つまり `F20`。
-- タッチ切り替えは CST816S のダブルタップを使う。
+- タッチ切り替えは CST816S の上スワイプを使う。
 - テーマ変更は `lv_async_call()` 経由で LVGL スレッド上にスケジュールする。
 - テーマ変更後、RING の各ウィジェットに対して色を再適用する。
 
@@ -371,8 +289,8 @@ CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y
 | CONFIG | デフォルト | 内容 |
 | --- | --- | --- |
 | `PROSPECTOR_STATUS_SCREEN_RING` | `n` | RING レイアウトを選択する。 |
-| `PROSPECTOR_RING_GESTURE_NAV` | `n` | スワイプ遷移とサブ画面を有効化する。 |
-| `PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | `n` | ダブルタップでテーマ切り替えを有効化する。 |
+| `PROSPECTOR_RING_GESTURE_NAV` | `n` | メイン画面上のタッチ操作を有効化する。 |
+| `PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | `n` | 上スワイプでテーマ切り替えを有効化する。 |
 | `PROSPECTOR_RING_DARK_TOGGLE_KEY` | `n` | キーコードでテーマ切り替えを有効化する。 |
 | `PROSPECTOR_RING_DARK_TOGGLE_KEYCODE` | `111` | テーマ切り替え用 HID キーコード。 |
 | `PROSPECTOR_RING_LAST_KEY_DISPLAY` | `y` | `LAST` 表示を有効化する。 |
@@ -381,7 +299,7 @@ CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y
 | `PROSPECTOR_BRIGHTNESS_KEY_CONTROL` | `n` | キーコードで輝度調整を有効化する。 |
 | `PROSPECTOR_BRIGHTNESS_UP_KEYCODE` | `115` | 輝度アップ用キーコード。デフォルトは F24。 |
 | `PROSPECTOR_BRIGHTNESS_DOWN_KEYCODE` | `114` | 輝度ダウン用キーコード。デフォルトは F23。 |
-| `PROSPECTOR_BRIGHTNESS_STEP` | `10` | キー操作時の輝度変更量。 |
+| `PROSPECTOR_BRIGHTNESS_STEP` | `10` | キー操作/タッチ操作時の輝度変更量。 |
 | `PROSPECTOR_DISPLAY_IDLE_TIMEOUT` | `0` | 表示/バックライトを消灯するまでの秒数。0 は無効。 |
 
 タッチ関連 CONFIG は、CST816S 入力に必要な CONFIG を自動で select する。
@@ -394,22 +312,18 @@ RING 関連の主なファイル:
 | --- | --- |
 | `status_screen.c` | RING 画面を作成し、各ウィジェットを初期化する。 |
 | `battery_rings.c` | ペリフェラルのバッテリーリングとレイヤー名。 |
+| `brightness_info.c` | 左下の輝度アイコンと輝度パーセント表示。 |
 | `modifier_chips.c` | 修飾キー チップと状態チップ。 |
 | `keys_info.c` | `LAST` 表示と `KEYS` カウンター。 |
 | `uptime_info.c` | 右上の uptime 表示。 |
 | `ring_theme.c` | テーマ状態、切り替え、テーマ再適用。 |
-| `ring_touch.c` | CST816S のジェスチャー設定とタッチイベント振り分け。 |
-| `ring_nav.c` | ページコンテナ、ページ順、スワイプ遷移、ページドット。 |
-| `page_bootloader.c` | Bootloader 確認画面。 |
-| `page_brightness.c` | Brightness 調整画面。 |
+| `ring_touch.c` | CST816S のジェスチャー設定とメイン画面上のタッチ操作。 |
 | `output_info.c` | 旧 Output 表示。現行 RING ビルドからは除外。 |
 
 ビルド条件:
 
 - `ring_touch.c` は、タッチテーマ切り替えまたはジェスチャーナビゲーションが
   有効な場合だけビルド対象になる。
-- `ring_nav.c`, `page_bootloader.c`, `page_brightness.c` は
-  `CONFIG_PROSPECTOR_RING_GESTURE_NAV=y` の場合だけビルド対象になる。
 - `output_info.c` は現行 RING ビルドから意図的に除外している。
   現在の RING では `KEYS`/`LAST` は `keys_info.c` にあり、
   USB/BLE 出力先表示とドングル側バッテリー表示は行わない。
@@ -418,8 +332,7 @@ RING 関連の主なファイル:
 
 - 現在の配置は 280 x 240 横長画面に最適化されている。
 - 0/90/180/270 度すべてを統一的に扱う汎用回転機能は未実装。
-- Bootloader 画面と Brightness 画面はジェスチャーナビゲーション有効時のみ
-  使用できる。
+- Bootloader と Brightness は専用画面を持たず、メイン画面上のタッチ操作で実行する。
 - USB/BLE の出力先表示とドングル側バッテリー表示は現行 RING 画面にはない。
 - `output_info.c` は旧実装/参考用としてソースツリーに残している。
 - `LAST` 表示は軽量なフィードバック/デバッグ用途であり、
