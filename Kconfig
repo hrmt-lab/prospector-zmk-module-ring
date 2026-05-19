@@ -126,7 +126,7 @@ config PROSPECTOR_RING_DARK_TOGGLE_KEYCODE
       Default is F20 (111). Brightness keys use F23(114) and F24(115).
 
 config PROSPECTOR_RING_DARK_TOGGLE_TOUCH
-    bool "Toggle RING dark theme via upward swipe"
+    bool "Toggle RING dark theme via display double-tap"
     default n
     depends on PROSPECTOR_STATUS_SCREEN_RING
     select INPUT
@@ -134,7 +134,7 @@ config PROSPECTOR_RING_DARK_TOGGLE_TOUCH
     select INPUT_CST816S_INTERRUPT
     select INPUT_CST816S_EV_DEVICE
     help
-      When enabled, swiping upward on the main screen toggles the RING
+      When enabled, double-tapping the display toggles the RING
       layout between light and dark theme. Requires CST816S touch controller
       to be present and configured in the devicetree.
 

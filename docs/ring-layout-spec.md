@@ -196,7 +196,6 @@ CONFIG_PROSPECTOR_RING_GESTURE_NAV=y
 | 操作 | 動作 |
 | --- | --- |
 | 下スワイプ後、800 ms 以内に右スワイプ | Bootloader に入る |
-| 上スワイプ | テーマを切り替える |
 | 画面左半分をタップ | 輝度を `CONFIG_PROSPECTOR_BRIGHTNESS_STEP` 下げる |
 | 画面右半分をタップ | 輝度を `CONFIG_PROSPECTOR_BRIGHTNESS_STEP` 上げる |
 
@@ -258,7 +257,7 @@ CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y
 
 - キー切り替えは、設定された HID キーコードが press されたときに行う。
 - デフォルトキーコードは `111`、つまり `F20`。
-- タッチ切り替えは CST816S の上スワイプを使う。
+- タッチ切り替えは CST816S のダブルタップを使う。
 - テーマ変更は `lv_async_call()` 経由で LVGL スレッド上にスケジュールする。
 - テーマ変更後、RING の各ウィジェットに対して色を再適用する。
 
@@ -290,7 +289,7 @@ CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y
 | --- | --- | --- |
 | `PROSPECTOR_STATUS_SCREEN_RING` | `n` | RING レイアウトを選択する。 |
 | `PROSPECTOR_RING_GESTURE_NAV` | `n` | メイン画面上のタッチ操作を有効化する。 |
-| `PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | `n` | 上スワイプでテーマ切り替えを有効化する。 |
+| `PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | `n` | ダブルタップでテーマ切り替えを有効化する。 |
 | `PROSPECTOR_RING_DARK_TOGGLE_KEY` | `n` | キーコードでテーマ切り替えを有効化する。 |
 | `PROSPECTOR_RING_DARK_TOGGLE_KEYCODE` | `111` | テーマ切り替え用 HID キーコード。 |
 | `PROSPECTOR_RING_LAST_KEY_DISPLAY` | `y` | `LAST` 表示を有効化する。 |

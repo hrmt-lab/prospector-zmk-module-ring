@@ -198,15 +198,6 @@ static void handle_main_swipe(uint16_t gesture) {
 
     clear_bootloader_sequence();
 
-    switch (direction) {
-    case CST816S_GESTURE_CODE_SWIPE_UP:
-#if IS_ENABLED(CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH)
-        ring_theme_toggle();
-#endif
-        break;
-    default:
-        break;
-    }
 }
 #endif
 
@@ -235,6 +226,11 @@ static void touch_input_cb(struct input_event *evt, void *user_data) {
     }
 
     switch (evt->code) {
+    case CST816S_GESTURE_CODE_DOUBLE_CLICK:
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH)
+        ring_theme_toggle();
+#endif
+        break;
 #if IS_ENABLED(CONFIG_PROSPECTOR_RING_GESTURE_NAV)
     case CST816S_GESTURE_CODE_SWIPE_LEFT:
     case CST816S_GESTURE_CODE_SWIPE_RIGHT:
@@ -246,15 +242,6 @@ static void touch_input_cb(struct input_event *evt, void *user_data) {
         handle_main_tap();
         break;
 #elif IS_ENABLED(CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH)
-    case CST816S_GESTURE_CODE_SWIPE_LEFT:
-    case CST816S_GESTURE_CODE_SWIPE_RIGHT:
-    case CST816S_GESTURE_CODE_SWIPE_UP:
-    case CST816S_GESTURE_CODE_SWIPE_DOWN:
-        if (gesture_to_screen_direction((uint16_t)evt->code) ==
-            CST816S_GESTURE_CODE_SWIPE_UP) {
-            ring_theme_toggle();
-        }
-        break;
 #endif
     default:
         break;

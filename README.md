@@ -34,7 +34,7 @@
 - 起動後経過時間表示（`UP`、60 秒ごとに更新）
 - 左下の輝度アイコン + 輝度パーセント表示
 - メイン画面の左右タップで輝度調整（CST816S タッチパネル搭載機、オプション）
-- 上スワイプでライト / ダークテーマ切り替え（CST816S タッチパネル搭載機）
+- ダブルタップでライト / ダークテーマ切り替え（CST816S タッチパネル搭載機）
 - 下スワイプ後、短時間内の右スワイプで Bootloader に入る（CST816S タッチパネル搭載機、オプション）
 
 ## インストール
@@ -128,7 +128,7 @@ keymap {
 
 **テーマ切り替え**
 
-CST816S タッチパネルを搭載した Prospector ドングルでは、`CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y` を有効にすることで、メイン画面を下から上へスワイプしてライトテーマとダークテーマを切り替えられます。
+CST816S タッチパネルを搭載した Prospector ドングルでは、`CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y` を有効にすることで、画面をダブルタップしてライトテーマとダークテーマを切り替えられます。
 
 **メイン画面タッチ操作**
 
@@ -179,7 +179,7 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 
 | 名前 | 説明 | デフォルト |
 | ---- | --- | --------- |
-| `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | ディスプレイの上スワイプでライト/ダークテーマを切り替え（CST816S タッチコントローラー必須） | n |
+| `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | ディスプレイのダブルタップでライト/ダークテーマを切り替え（CST816S タッチコントローラー必須） | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEY` | キーコードでライト/ダークテーマを切り替え | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEYCODE` | テーマ切り替えキーコード（`DARK_TOGGLE_KEY` 有効時） | 111 (F20) |
 
@@ -265,7 +265,7 @@ On `feat/ring-light`, RING uses a single main screen and handles touch actions d
 - Uptime display (`UP`, updated every 60 seconds)
 - Brightness icon and percentage in the lower-left corner
 - Tap left/right halves of the main screen to adjust brightness (CST816S touch panel, optional)
-- Swipe up to toggle light / dark theme (CST816S touch panel)
+- Double-tap to toggle light / dark theme (CST816S touch panel)
 - Swipe down, then swipe right shortly after, to enter Bootloader (CST816S touch panel, optional)
 
 ## Installation
@@ -359,7 +359,7 @@ keymap {
 
 **Theme toggle**
 
-On Prospector dongles with a CST816S touch panel, enable `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y` to toggle between light and dark themes by swiping up on the main screen.
+On Prospector dongles with a CST816S touch panel, enable `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y` to toggle between light and dark themes by double-tapping the display.
 
 **Main-screen touch actions**
 
@@ -410,7 +410,7 @@ When brightness key control is enabled, assign keys that emit the configured key
 
 | Name | Description | Default |
 | ---- | ----------- | ------- |
-| `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | Toggle light/dark theme by swiping up on the display (requires CST816S touch controller) | n |
+| `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | Toggle light/dark theme by double-tapping the display (requires CST816S touch controller) | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEY` | Toggle light/dark theme via keycode | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEYCODE` | Keycode for toggling theme (when `DARK_TOGGLE_KEY` is enabled) | 111 (F20) |
 
