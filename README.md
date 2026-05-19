@@ -52,9 +52,9 @@ manifest:
       remote: zmkfirmware
       revision: main
       import: app/west.yml
-    - name: prospector-zmk-module                  # <--- 追加
+    - name: prospector-zmk-module-ring             # <--- 追加
       remote: hrmt-lab                             # <---
-      revision: feat/new-status-screens            # <---
+      revision: main                               # <---
   self:
     path: config
 ```
@@ -280,9 +280,9 @@ manifest:
       remote: zmkfirmware
       revision: main
       import: app/west.yml
-    - name: prospector-zmk-module                  # <--- and these
+    - name: prospector-zmk-module-ring             # <--- and these
       remote: hrmt-lab                             # <---
-      revision: feat/new-status-screens            # <---
+      revision: main                               # <---
   self:
     path: config
 ```
