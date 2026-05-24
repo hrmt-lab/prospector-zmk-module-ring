@@ -33,17 +33,24 @@ CONFIG_PROSPECTOR_STATUS_SCREEN_RING=y
 - フォントは `lv_font_montserrat_14`。
 - 色は `ring_color_text_pri()`。
 
-### Uptime 表示
+### Uptime / TIME_SYNC 表示
 
-右上にドングル起動後の経過時間を表示する。
+右上にドングル起動後の経過時間を表示する。Raw HID TIME_SYNC が
+利用でき、時刻同期済みの場合は、同じ領域に時刻/日付を優先表示する。
 
 - 位置は `(198, 10)`。
 - 幅は `64`。
-- 更新間隔は 60 秒固定。
+- uptime 表示の更新間隔は 60 秒。
 - フォントは `lv_font_montserrat_12`。
 - 色は `ring_color_text_off()`。
 - 100 時間未満は `UP  h:mm` 形式。
 - 100 時間以上は `UP  Nh` 形式。
+- TIME_SYNC 表示時は `lv_font_montserrat_14`、固定黒文字
+  (`0x000000`)。
+- TIME_SYNC 表示時は右端を保ったまま表示域を左方向へ広げ、
+  `YYYY-MM-DD HH:MM` 形式まで収める。
+- TIME_SYNC が秒表示を要求する場合は 1 秒ごと、それ以外の時刻表示は
+  60 秒ごとに更新する。
 - ルート画面に配置するため、サブ画面表示中も見える。
 
 ### バッテリーリング
@@ -314,7 +321,7 @@ RING 関連の主なファイル:
 | `brightness_info.c` | 左下の輝度アイコンと輝度パーセント表示。 |
 | `modifier_chips.c` | 修飾キー チップと状態チップ。 |
 | `keys_info.c` | `LAST` 表示と `KEYS` カウンター。 |
-| `uptime_info.c` | 右上の uptime 表示。 |
+| `uptime_info.c` | 右上の uptime / TIME_SYNC 表示。 |
 | `ring_theme.c` | テーマ状態、切り替え、テーマ再適用。 |
 | `ring_touch.c` | CST816S のジェスチャー設定とメイン画面上のタッチ操作。 |
 | `output_info.c` | 旧 Output 表示。現行 RING ビルドからは除外。 |

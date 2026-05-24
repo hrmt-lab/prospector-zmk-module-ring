@@ -31,7 +31,7 @@
 - IME 状態インジケーター（変換キーで ON、無変換キーで OFF）
 - 打鍵カウンター
 - 最後に送出された HID キー表示（`LAST`、オプション）
-- 起動後経過時間表示（`UP`、60 秒ごとに更新）
+- 起動後経過時間表示（`UP`、60 秒ごとに更新。[raw-hid-host](https://github.com/hrmt-lab/RawHID-host) 連携時は時刻表示）
 - 左下の輝度アイコン + 輝度パーセント表示
 - メイン画面の左右タップで輝度調整（CST816S タッチパネル搭載機、オプション）
 - ダブルタップでライト / ダークテーマ切り替え（CST816S タッチパネル搭載機）
@@ -94,7 +94,7 @@ CONFIG_PROSPECTOR_STATUS_SCREEN_RING=y
 
 **右パネル — 状態表示**
 
-- 右上の起動後経過時間（`UP  0:12`、60 秒ごとに更新）
+- 右上の起動後経過時間（`UP  0:12`、60 秒ごとに更新。[raw-hid-host](https://github.com/hrmt-lab/RawHID-host) 対応時は時刻/日付を表示）
 - CTRL / SHFT / ALT / GUI モディファイアチップ
 - CAPS / IME 状態チップ
 - 最後に送出された HID キー（`LAST`、`CONFIG_PROSPECTOR_RING_LAST_KEY_DISPLAY` で無効化可能）
@@ -189,8 +189,6 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 | ---- | --- | --------- |
 | `CONFIG_PROSPECTOR_RING_LAST_KEY_DISPLAY` | `LAST` に最後に送出された HID キーを表示 | y |
 
-右上の `UP` 表示は CONFIG なしで常時有効です。起動後経過時間を 60 秒ごとに更新します。
-
 ### RING メイン画面タッチ操作
 
 | 名前 | 説明 | デフォルト |
@@ -262,7 +260,7 @@ On `feat/ring-light`, RING uses a single main screen and handles touch actions d
 - IME state indicator (INTERNATIONAL4 = ON, INTERNATIONAL5 = OFF)
 - Keystroke counter
 - Last emitted HID key display (`LAST`, optional)
-- Uptime display (`UP`, updated every 60 seconds)
+- Uptime display (`UP`, updated every 60 seconds; shows time when linked with [raw-hid-host](https://github.com/hrmt-lab/RawHID-host))
 - Brightness icon and percentage in the lower-left corner
 - Tap left/right halves of the main screen to adjust brightness (CST816S touch panel, optional)
 - Double-tap to toggle light / dark theme (CST816S touch panel)
@@ -325,7 +323,7 @@ The ring count and sizing adapt automatically to the peripheral count (`ZMK_SPLI
 
 **Right panel — Status indicators**
 
-- Uptime in the top-right corner (`UP  0:12`, updated every 60 seconds)
+- Uptime in the top-right corner (`UP  0:12`, updated every 60 seconds; shows time/date when paired with [raw-hid-host](https://github.com/hrmt-lab/RawHID-host))
 - CTRL / SHFT / ALT / GUI modifier chips
 - CAPS / IME state chips
 - Last emitted HID key (`LAST`, can be disabled with `CONFIG_PROSPECTOR_RING_LAST_KEY_DISPLAY`)
@@ -419,8 +417,6 @@ When brightness key control is enabled, assign keys that emit the configured key
 | Name | Description | Default |
 | ---- | ----------- | ------- |
 | `CONFIG_PROSPECTOR_RING_LAST_KEY_DISPLAY` | Show the last emitted HID key in the `LAST` field | y |
-
-The top-right `UP` uptime indicator is always enabled and updates every 60 seconds.
 
 ### RING Main-Screen Touch Actions
 
