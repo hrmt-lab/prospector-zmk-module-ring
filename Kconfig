@@ -71,6 +71,18 @@ config PROSPECTOR_DISPLAY_IDLE_TIMEOUT
       This timeout is independent from ZMK_IDLE_TIMEOUT and only controls the
       Prospector display/backlight.
 
+config PROSPECTOR_DISPLAY_TOUCH_WAKE
+    bool "Wake the display from idle-off with touch"
+    default y if PROSPECTOR_DISPLAY_IDLE_TIMEOUT > 0
+    select INPUT
+    select INPUT_CST816S
+    select INPUT_CST816S_INTERRUPT
+    select INPUT_CST816S_EV_DEVICE
+    help
+      Wake the Prospector display and backlight from idle-off when the CST816S
+      touch controller reports touch input. This is independent from the RING
+      layout's double-tap theme toggle and gesture navigation options.
+
 config PROSPECTOR_BRIGHTNESS_KEY_CONTROL
     bool "Control display brightness via keycodes"
     default n

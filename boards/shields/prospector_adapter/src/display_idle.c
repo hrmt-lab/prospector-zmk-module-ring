@@ -1,6 +1,7 @@
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/display.h>
+#include <zephyr/input/input.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
@@ -93,6 +94,28 @@ static void note_activity(void) {
     display_wake();
     display_idle_schedule();
 }
+
+#if IS_ENABLED(CONFIG_PROSPECTOR_DISPLAY_TOUCH_WAKE)
+static void touch_wake_input_cb(struct input_event *evt, void *user_data) {
+    ARG_UNUSED(user_data);
+
+    if (evt == NULL) {
+        return;
+    }
+
+    switch (evt->type) {
+    case INPUT_EV_KEY:
+    case INPUT_EV_ABS:
+    case INPUT_EV_DEVICE:
+        note_activity();
+        break;
+    default:
+        break;
+    }
+}
+
+INPUT_CALLBACK_DEFINE(DEVICE_DT_GET(DT_NODELABEL(cst816s)), touch_wake_input_cb, NULL);
+#endif
 
 #if IS_ENABLED(CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL)
 static bool handle_brightness_key(const struct zmk_keycode_state_changed *ev) {
