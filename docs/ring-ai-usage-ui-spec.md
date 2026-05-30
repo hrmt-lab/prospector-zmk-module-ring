@@ -355,7 +355,7 @@ error > stale > estimated > normal
 | MOD 状態 | `zmk_hid_get_explicit_mods()` |
 | IME 状態 | `INTERNATIONAL4` で JP、`INTERNATIONAL5` で EN |
 | 輝度 | `prospector_brightness_get_user_level()` |
-| AI 使用率 | PC側外部連携スクリプトから受信（別途実装） |
+| AI 使用率 | `zmk-rawhid-app` モジュールが RawHID で受信し `rawhid_app_ai_usage_get()` で供給 |
 
 ---
 

@@ -145,7 +145,7 @@ CST816S タッチパネルを搭載した Prospector ドングルでは、`CONFI
 
 **AI Usage 画面**
 
-`CONFIG_PROSPECTOR_RING_AI_USAGE=y` を有効にすると、Main 画面と AI Usage 画面を切り替えられます。AI Usage 画面は Claude / Codex の 5 時間枠・7 日枠の使用率を縦棒グラフで表示します（データはキーボード側の RawHID ハンドラがホストから受信して供給。例: hitsuki46）。
+`CONFIG_PROSPECTOR_RING_AI_USAGE=y` を有効にすると、Main 画面と AI Usage 画面を切り替えられます。AI Usage 画面は Claude / Codex の 5 時間枠・7 日枠の使用率を縦棒グラフで表示します（データは [zmk-rawhid-app](https://github.com/hrmt-lab/zmk-rawhid-app) モジュール等のキーボード側 RawHID 連携がホストから受信し、getter 経由で供給）。
 
 | 操作 | 動作 |
 |---|---|
@@ -211,12 +211,12 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 
 | 名前 | 説明 | デフォルト |
 | ---- | --- | --------- |
-| `CONFIG_PROSPECTOR_RING_AI_USAGE` | AI Usage 画面を有効化（使用率データは別途キーボード側 RawHID ハンドラが供給） | n |
+| `CONFIG_PROSPECTOR_RING_AI_USAGE` | AI Usage 画面を有効化（使用率データは `zmk-rawhid-app` 等のキーボード側 RawHID 連携が供給） | n |
 | `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY` | キーコード長押しで Main ↔ AI Usage を切替 | n |
 | `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEYCODE` | 切替キーコード（`TOGGLE_KEY` 有効時） | 112 (F21) |
 | `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH` | 画面長押しタッチで切替（CST816S タッチコントローラー必須） | n |
 
-`CONFIG_PROSPECTOR_RING_AI_USAGE` 単体では画面は出ますが、使用率データはキーボード側の RawHID 連携（例: hitsuki46 の `CONFIG_HITSUKI46_RAW_HID_AI_USAGE`）が必要です。未供給時は `--` 表示になります。
+`CONFIG_PROSPECTOR_RING_AI_USAGE` 単体では画面は出ますが、使用率データはキーボード側の RawHID 連携（[zmk-rawhid-app](https://github.com/hrmt-lab/zmk-rawhid-app) の `CONFIG_RAWHID_APP_AI_USAGE`）が必要です。未供給時は `--` 表示になります。
 
 ## トラブルシューティング
 
@@ -397,7 +397,7 @@ Brightness changes update the lower-left percentage display immediately. The Boo
 
 **AI Usage screen**
 
-Enable `CONFIG_PROSPECTOR_RING_AI_USAGE=y` to switch between the Main screen and the AI Usage screen, which shows Claude / Codex 5-hour and 7-day usage as vertical bar graphs. The usage data is supplied by a keyboard-side RawHID handler that receives it from the host (e.g. hitsuki46).
+Enable `CONFIG_PROSPECTOR_RING_AI_USAGE=y` to switch between the Main screen and the AI Usage screen, which shows Claude / Codex 5-hour and 7-day usage as vertical bar graphs. The usage data is supplied by a keyboard-side RawHID handler that receives it from the host — typically the [zmk-rawhid-app](https://github.com/hrmt-lab/zmk-rawhid-app) module (as used on hitsuki46).
 
 | Action | Result |
 |---|---|
@@ -468,7 +468,7 @@ When brightness key control is enabled, assign keys that emit the configured key
 | `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEYCODE` | Keycode for toggling (when `TOGGLE_KEY` is enabled) | 112 (F21) |
 | `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH` | Toggle via long-press touch (requires CST816S touch controller) | n |
 
-`CONFIG_PROSPECTOR_RING_AI_USAGE` alone renders the screen, but usage data requires keyboard-side RawHID integration (e.g. hitsuki46's `CONFIG_HITSUKI46_RAW_HID_AI_USAGE`). Without it, values show `--`.
+`CONFIG_PROSPECTOR_RING_AI_USAGE` alone renders the screen, but usage data requires keyboard-side RawHID integration (the [zmk-rawhid-app](https://github.com/hrmt-lab/zmk-rawhid-app) module's `CONFIG_RAWHID_APP_AI_USAGE`). Without it, values show `--`.
 
 ## Troubleshooting
 

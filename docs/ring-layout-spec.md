@@ -343,7 +343,7 @@ RING 関連の主なファイル:
 
 `CONFIG_PROSPECTOR_RING_AI_USAGE=y` で有効化する、Main と切り替え可能な追加画面。
 Claude / Codex の 5h・7d 使用率を縦棒グラフ4本で表示する。使用率データはキーボード側の
-RawHID ハンドラ（例: hitsuki46 の `CONFIG_HITSUKI46_RAW_HID_AI_USAGE`）が getter 経由で供給する。
+RawHID 連携モジュール（[zmk-rawhid-app](https://github.com/hrmt-lab/zmk-rawhid-app) の `CONFIG_RAWHID_APP_AI_USAGE`、`rawhid_app_ai_usage_get()`）が getter 経由で供給する。
 詳細レイアウトは [ring-ai-usage-ui-spec.md](ring-ai-usage-ui-spec.md) を参照。
 
 切替:
