@@ -29,7 +29,7 @@ if(CONFIG_SHIELD_PROSPECTOR_ADAPTER)
     # but RING now uses keys_info.c for KEYS/LAST and omits output_info.c.
     list(FILTER layout_sources EXCLUDE REGEX "output_info\\.c$")
     zephyr_library_sources(${layout_sources})
-    if(CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH OR CONFIG_PROSPECTOR_RING_GESTURE_NAV)
+    if(CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH OR CONFIG_PROSPECTOR_RING_GESTURE_NAV OR CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH)
       zephyr_library_sources(src/layouts/ring/ring_touch.c)
     endif()
   endif()

@@ -14,6 +14,9 @@
 #include "keys_info.h"
 #include "modifier_chips.h"
 #include "uptime_info.h"
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_AI_USAGE)
+#include "ai_usage.h"
+#endif
 
 /* Forward declaration: status_screen.c has no header of its own. */
 void ring_status_screen_apply_theme(void);
@@ -33,6 +36,9 @@ void ring_theme_apply_all(void) {
     ring_keys_info_apply_theme();
     ring_modifier_chips_apply_theme();
     ring_uptime_info_apply_theme();
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_AI_USAGE)
+    ring_ai_usage_apply_theme();
+#endif
 }
 
 /* Called on the LVGL display thread via lv_async_call().

@@ -161,3 +161,45 @@ config PROSPECTOR_RING_LAST_KEY_DISPLAY
       When enabled, the RING layout shows the last emitted HID keycode
       between the STATE chips and KEYS counter. This is intended as a
       lightweight, optional debugging/visual feedback panel.
+
+# ── RING AI Usage screen ──────────────────────────────────────────────
+
+config PROSPECTOR_RING_AI_USAGE
+    bool "Enable RING AI Usage screen"
+    default n
+    depends on PROSPECTOR_STATUS_SCREEN_RING
+    help
+      When enabled, the RING layout can switch to an AI Usage screen that
+      shows Claude Code / Codex 5h and 7d usage as vertical bar graphs.
+      The usage data is supplied by a host-specific Raw HID handler (e.g.
+      CONFIG_HITSUKI46_RAW_HID_AI_USAGE); without it the bars show no data.
+
+config PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY
+    bool "Toggle RING AI Usage screen via long-pressed keycode"
+    default n
+    depends on PROSPECTOR_RING_AI_USAGE
+    help
+      When enabled, long-pressing the configured keycode toggles between the
+      RING main screen and the AI Usage screen.
+
+config PROSPECTOR_RING_AI_USAGE_TOGGLE_KEYCODE
+    int "Keycode for toggling the RING AI Usage screen"
+    default 112
+    depends on PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY
+    help
+      HID keycode that toggles the AI Usage screen on long press.
+      Default is F21 (112). Brightness keys use F23(114)/F24(115) and the
+      dark-theme key uses F20(111).
+
+config PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH
+    bool "Toggle RING AI Usage screen via long-press touch"
+    default n
+    depends on PROSPECTOR_RING_AI_USAGE
+    select INPUT
+    select INPUT_CST816S
+    select INPUT_CST816S_INTERRUPT
+    select INPUT_CST816S_EV_DEVICE
+    help
+      When enabled, pressing and holding the display for the long-press
+      duration toggles between the RING main screen and the AI Usage screen.
+      Requires a CST816S touch controller in the devicetree.

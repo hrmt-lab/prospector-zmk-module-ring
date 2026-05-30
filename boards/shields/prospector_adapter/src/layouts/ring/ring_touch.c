@@ -16,7 +16,25 @@
 #include <zephyr/sys/reboot.h>
 #endif
 
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH)
+#include "ai_usage.h"
+#endif
+
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
+
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH)
+/* Long-press touch toggle: arm a timer on touch-down and fire once it elapses
+ * while still held (mirrors the keycode long-press behaviour). */
+static struct k_work_delayable touch_longpress_work;
+static bool s_touch_active;
+static bool s_touch_longpress_fired;
+
+static void touch_longpress_work_cb(struct k_work *work) {
+    ARG_UNUSED(work);
+    s_touch_longpress_fired = true;
+    ring_ai_usage_toggle();
+}
+#endif
 
 /* CST816S register addresses (not exported by the upstream driver). */
 #define CST816S_REG_MOTION_MASK 0xEC
@@ -35,6 +53,10 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 static int ring_touch_init(void) {
     static const struct i2c_dt_spec cst_i2c =
         I2C_DT_SPEC_GET(DT_NODELABEL(cst816s));
+
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH)
+    k_work_init_delayable(&touch_longpress_work, touch_longpress_work_cb);
+#endif
 
     if (!device_is_ready(cst_i2c.bus)) {
         LOG_ERR("ring_touch: I2C bus not ready");
@@ -172,6 +194,15 @@ static void clear_bootloader_sequence(void) {
 static void handle_main_tap(void) {
     clear_bootloader_sequence();
 
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH)
+    /* A long-press already toggled the screen on this touch; swallow the tap
+     * so it doesn't also nudge brightness on release. */
+    if (s_touch_longpress_fired) {
+        s_touch_longpress_fired = false;
+        return;
+    }
+#endif
+
     if (s_current_x >= (SCREEN_W / 2)) {
         prospector_brightness_adjust_user_level(CONFIG_PROSPECTOR_BRIGHTNESS_STEP);
     } else {
@@ -204,6 +235,27 @@ static void handle_main_swipe(uint16_t gesture) {
 static void touch_input_cb(struct input_event *evt, void *user_data) {
     ARG_UNUSED(user_data);
 
+    /* Touch up/down: drive the long-press timer (AI Usage) and, when gesture
+     * nav is on, keep the current touch point fresh. */
+    if (evt->type == INPUT_EV_KEY && evt->code == INPUT_BTN_TOUCH) {
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH)
+        if (evt->value) {
+            if (!s_touch_active) {
+                s_touch_active = true;
+                s_touch_longpress_fired = false;
+                k_work_schedule(&touch_longpress_work, K_MSEC(RING_AI_USAGE_LONGPRESS_MS));
+            }
+        } else {
+            s_touch_active = false;
+            k_work_cancel_delayable(&touch_longpress_work);
+        }
+#endif
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_GESTURE_NAV)
+        update_current_screen_point();
+#endif
+        return;
+    }
+
 #if IS_ENABLED(CONFIG_PROSPECTOR_RING_GESTURE_NAV)
     if (evt->type == INPUT_EV_ABS) {
         if (evt->code == INPUT_ABS_X) {
@@ -211,11 +263,6 @@ static void touch_input_cb(struct input_event *evt, void *user_data) {
         } else if (evt->code == INPUT_ABS_Y) {
             s_touch_y = (int16_t)evt->value;
         }
-        update_current_screen_point();
-        return;
-    }
-
-    if (evt->type == INPUT_EV_KEY && evt->code == INPUT_BTN_TOUCH) {
         update_current_screen_point();
         return;
     }

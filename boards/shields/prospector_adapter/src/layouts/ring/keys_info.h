@@ -16,3 +16,6 @@ struct zmk_widget_keys_info {
 int zmk_widget_keys_info_init(struct zmk_widget_keys_info *widget, lv_obj_t *parent);
 lv_obj_t *zmk_widget_keys_info_obj(struct zmk_widget_keys_info *widget);
 void ring_keys_info_apply_theme(void);
+
+/* Show/hide the LAST and KEYS labels (hidden on the AI Usage screen). */
+void ring_keys_info_set_visible(bool visible);

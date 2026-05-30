@@ -13,3 +13,8 @@ struct zmk_widget_modifier_chips {
 int zmk_widget_modifier_chips_init(struct zmk_widget_modifier_chips *widget, lv_obj_t *parent);
 lv_obj_t *zmk_widget_modifier_chips_obj(struct zmk_widget_modifier_chips *widget);
 void ring_modifier_chips_apply_theme(void);
+
+/* Reposition chips for the Main (ai_usage=false) or AI Usage (ai_usage=true)
+ * layout.  In AI Usage layout the MOD/IME chips form a single top row and the
+ * Caps Word chip + MOD/STATE separator are hidden. */
+void ring_modifier_chips_apply_layout(bool ai_usage);

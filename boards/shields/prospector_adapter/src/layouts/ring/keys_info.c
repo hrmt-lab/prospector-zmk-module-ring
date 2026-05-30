@@ -206,6 +206,34 @@ lv_obj_t *zmk_widget_keys_info_obj(struct zmk_widget_keys_info *widget) {
     return widget->obj;
 }
 
+static void set_hidden(lv_obj_t *obj, bool hidden) {
+    if (!obj) {
+        return;
+    }
+    if (hidden) {
+        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+    } else {
+        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+    }
+}
+
+void ring_keys_info_set_visible(bool visible) {
+    bool hidden = !visible;
+
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_LAST_KEY_DISPLAY)
+    set_hidden(s_last_header, hidden);
+#endif
+    set_hidden(s_keys_header, hidden);
+
+    struct zmk_widget_keys_info *widget;
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
+#if IS_ENABLED(CONFIG_PROSPECTOR_RING_LAST_KEY_DISPLAY)
+        set_hidden(widget->last_value, hidden);
+#endif
+        set_hidden(widget->keys_value, hidden);
+    }
+}
+
 void ring_keys_info_apply_theme(void) {
 #if IS_ENABLED(CONFIG_PROSPECTOR_RING_LAST_KEY_DISPLAY)
     if (s_last_header) {
