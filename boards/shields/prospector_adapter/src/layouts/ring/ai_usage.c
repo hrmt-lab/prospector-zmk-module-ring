@@ -18,8 +18,8 @@
 #include "modifier_chips.h"
 #include "ring_theme.h"
 
-#if IS_ENABLED(CONFIG_HITSUKI46_RAW_HID_AI_USAGE)
-#include <hitsuki46/raw_hid_ai_usage.h>
+#if IS_ENABLED(CONFIG_RAWHID_APP_AI_USAGE)
+#include <rawhid_app/ai_usage.h>
 #endif
 
 #if IS_ENABLED(CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY)
@@ -92,9 +92,9 @@ struct ai_view {
 
 static struct ai_view fetch_provider(uint8_t provider) {
     struct ai_view v = {0};
-#if IS_ENABLED(CONFIG_HITSUKI46_RAW_HID_AI_USAGE)
-    struct hitsuki46_ai_usage_provider p;
-    if (hitsuki46_raw_hid_ai_usage_get(provider, &p)) {
+#if IS_ENABLED(CONFIG_RAWHID_APP_AI_USAGE)
+    struct rawhid_app_ai_usage_provider p;
+    if (rawhid_app_ai_usage_get(provider, &p)) {
         v.present = true;
         v.flags = p.flags;
         v.five_bp = p.five_hour_used_bp;
