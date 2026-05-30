@@ -87,3 +87,20 @@ void ring_brightness_info_apply_theme(void) {
         apply_widget_theme(widget);
     }
 }
+
+void ring_brightness_info_set_visible(bool visible) {
+    struct zmk_widget_brightness_info *widget;
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
+        lv_obj_t *objs[] = {widget->icon, widget->value};
+        for (int i = 0; i < 2; i++) {
+            if (!objs[i]) {
+                continue;
+            }
+            if (visible) {
+                lv_obj_clear_flag(objs[i], LV_OBJ_FLAG_HIDDEN);
+            } else {
+                lv_obj_add_flag(objs[i], LV_OBJ_FLAG_HIDDEN);
+            }
+        }
+    }
+}

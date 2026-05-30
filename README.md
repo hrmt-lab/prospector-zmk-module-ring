@@ -36,6 +36,7 @@
 - メイン画面の左右タップで輝度調整（CST816S タッチパネル搭載機、オプション）
 - ダブルタップでライト / ダークテーマ切り替え（CST816S タッチパネル搭載機）
 - 下スワイプ後、短時間内の右スワイプで Bootloader に入る（CST816S タッチパネル搭載機、オプション）
+- AI Usage 画面（Claude / Codex の 5h・7d 使用率を縦棒グラフで表示。データはホストから RawHID で受信。長押しキー / 長押しタッチで Main と切替、オプション）
 
 ## インストール
 
@@ -142,6 +143,17 @@ CST816S タッチパネルを搭載した Prospector ドングルでは、`CONFI
 
 輝度を変更すると、左下の輝度パーセント表示も更新されます。Bootloader 操作は確認画面を表示せず、条件成立時にすぐ Bootloader に入ります。
 
+**AI Usage 画面**
+
+`CONFIG_PROSPECTOR_RING_AI_USAGE=y` を有効にすると、Main 画面と AI Usage 画面を切り替えられます。AI Usage 画面は Claude / Codex の 5 時間枠・7 日枠の使用率を縦棒グラフで表示します（データはキーボード側の RawHID ハンドラがホストから受信して供給。例: hitsuki46）。
+
+| 操作 | 動作 |
+|---|---|
+| 切替キーを長押し（既定 F21、約 0.7 秒） | Main ↔ AI Usage を切替 |
+| 画面を長押しタッチ（約 0.7 秒、CST816S 搭載機） | Main ↔ AI Usage を切替 |
+
+長押し判定は「押し続けて閾値に達した時点」で切り替わります（離した瞬間ではありません）。切替キーは別途キーマップに割り当ててください（既定は F21）。使用率の色は使用率の値によらず各プロバイダーのブランドカラー固定です。詳細は [docs/ring-ai-usage-ui-spec.md](docs/ring-ai-usage-ui-spec.md) を参照してください。
+
 ## 設定
 
 `.conf` ファイルに設定を追加してカスタマイズできます:
@@ -194,6 +206,17 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 | 名前 | 説明 | デフォルト |
 | ---- | --- | --------- |
 | `CONFIG_PROSPECTOR_RING_GESTURE_NAV` | メイン画面上のタッチ操作を有効化（CST816S タッチコントローラー必須。`DARK_TOGGLE_TOUCH` とは独立） | n |
+
+### RING AI Usage 画面
+
+| 名前 | 説明 | デフォルト |
+| ---- | --- | --------- |
+| `CONFIG_PROSPECTOR_RING_AI_USAGE` | AI Usage 画面を有効化（使用率データは別途キーボード側 RawHID ハンドラが供給） | n |
+| `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY` | キーコード長押しで Main ↔ AI Usage を切替 | n |
+| `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEYCODE` | 切替キーコード（`TOGGLE_KEY` 有効時） | 112 (F21) |
+| `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH` | 画面長押しタッチで切替（CST816S タッチコントローラー必須） | n |
+
+`CONFIG_PROSPECTOR_RING_AI_USAGE` 単体では画面は出ますが、使用率データはキーボード側の RawHID 連携（例: hitsuki46 の `CONFIG_HITSUKI46_RAW_HID_AI_USAGE`）が必要です。未供給時は `--` 表示になります。
 
 ## トラブルシューティング
 
@@ -265,6 +288,7 @@ On `feat/ring-light`, RING uses a single main screen and handles touch actions d
 - Tap left/right halves of the main screen to adjust brightness (CST816S touch panel, optional)
 - Double-tap to toggle light / dark theme (CST816S touch panel)
 - Swipe down, then swipe right shortly after, to enter Bootloader (CST816S touch panel, optional)
+- AI Usage screen (vertical bar graphs of Claude / Codex 5h and 7d usage; data received from the host over RawHID; toggle with a long-press key / long-press touch, optional)
 
 ## Installation
 
@@ -371,6 +395,17 @@ Enable `CONFIG_PROSPECTOR_RING_GESTURE_NAV=y` to run touch actions directly on t
 
 Brightness changes update the lower-left percentage display immediately. The Bootloader gesture does not show a confirmation screen; once the gesture sequence is accepted, the dongle enters Bootloader immediately.
 
+**AI Usage screen**
+
+Enable `CONFIG_PROSPECTOR_RING_AI_USAGE=y` to switch between the Main screen and the AI Usage screen, which shows Claude / Codex 5-hour and 7-day usage as vertical bar graphs. The usage data is supplied by a keyboard-side RawHID handler that receives it from the host (e.g. hitsuki46).
+
+| Action | Result |
+|---|---|
+| Long-press the toggle key (default F21, ~0.7 s) | Switch Main ↔ AI Usage |
+| Long-press the display (~0.7 s, CST816S panel) | Switch Main ↔ AI Usage |
+
+The long-press fires once the threshold is reached **while still held** (not on release). Assign the toggle key in your keymap (default F21). Bar colors are fixed to each provider's brand color regardless of the usage value. See [docs/ring-ai-usage-ui-spec.md](docs/ring-ai-usage-ui-spec.md) for details.
+
 ## Configuration
 
 Customize by adding config options to your `.conf` file:
@@ -423,6 +458,17 @@ When brightness key control is enabled, assign keys that emit the configured key
 | Name | Description | Default |
 | ---- | ----------- | ------- |
 | `CONFIG_PROSPECTOR_RING_GESTURE_NAV` | Enable main-screen touch actions (requires CST816S touch controller; independent from `DARK_TOGGLE_TOUCH`) | n |
+
+### RING AI Usage Screen
+
+| Name | Description | Default |
+| ---- | ----------- | ------- |
+| `CONFIG_PROSPECTOR_RING_AI_USAGE` | Enable the AI Usage screen (usage data must be supplied by a keyboard-side RawHID handler) | n |
+| `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY` | Toggle Main ↔ AI Usage via a long-pressed keycode | n |
+| `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEYCODE` | Keycode for toggling (when `TOGGLE_KEY` is enabled) | 112 (F21) |
+| `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH` | Toggle via long-press touch (requires CST816S touch controller) | n |
+
+`CONFIG_PROSPECTOR_RING_AI_USAGE` alone renders the screen, but usage data requires keyboard-side RawHID integration (e.g. hitsuki46's `CONFIG_HITSUKI46_RAW_HID_AI_USAGE`). Without it, values show `--`.
 
 ## Troubleshooting
 

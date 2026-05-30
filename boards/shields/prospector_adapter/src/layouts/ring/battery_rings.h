@@ -20,3 +20,8 @@ struct zmk_widget_battery_rings {
 int zmk_widget_battery_rings_init(struct zmk_widget_battery_rings *widget, lv_obj_t *parent);
 lv_obj_t *zmk_widget_battery_rings_obj(struct zmk_widget_battery_rings *widget);
 void ring_battery_rings_apply_theme(void);
+
+/* Switch between Main (ai_usage=false) and AI Usage (ai_usage=true) layout.
+ * AI Usage hides the arcs/dots/values and moves the layer name to the upper
+ * left at a smaller serif size. */
+void ring_battery_rings_apply_layout(bool ai_usage);

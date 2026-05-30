@@ -307,6 +307,10 @@ CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y
 | `PROSPECTOR_BRIGHTNESS_DOWN_KEYCODE` | `114` | 輝度ダウン用キーコード。デフォルトは F23。 |
 | `PROSPECTOR_BRIGHTNESS_STEP` | `10` | キー操作/タッチ操作時の輝度変更量。 |
 | `PROSPECTOR_DISPLAY_IDLE_TIMEOUT` | `0` | 表示/バックライトを消灯するまでの秒数。0 は無効。 |
+| `PROSPECTOR_RING_AI_USAGE` | `n` | AI Usage 画面を有効化する。 |
+| `PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY` | `n` | キーコード長押しで Main↔AI Usage 切替を有効化する。 |
+| `PROSPECTOR_RING_AI_USAGE_TOGGLE_KEYCODE` | `112` | AI Usage 切替用 HID キーコード。デフォルトは F21。 |
+| `PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH` | `n` | 画面長押しタッチで Main↔AI Usage 切替を有効化する。 |
 
 タッチ関連 CONFIG は、CST816S 入力に必要な CONFIG を自動で select する。
 
@@ -323,16 +327,42 @@ RING 関連の主なファイル:
 | `keys_info.c` | `LAST` 表示と `KEYS` カウンター。 |
 | `uptime_info.c` | 右上の uptime / TIME_SYNC 表示。 |
 | `ring_theme.c` | テーマ状態、切り替え、テーマ再適用。 |
-| `ring_touch.c` | CST816S のジェスチャー設定とメイン画面上のタッチ操作。 |
+| `ring_touch.c` | CST816S のジェスチャー設定とメイン画面上のタッチ操作、長押しタッチ切替。 |
+| `ai_usage.c` | AI Usage 画面の生成/破棄、バー描画、長押しキー切替。 |
 | `output_info.c` | 旧 Output 表示。現行 RING ビルドからは除外。 |
 
 ビルド条件:
 
-- `ring_touch.c` は、タッチテーマ切り替えまたはジェスチャーナビゲーションが
-  有効な場合だけビルド対象になる。
+- `ring_touch.c` は、タッチテーマ切り替え・ジェスチャーナビゲーション・
+  AI Usage タッチ切替のいずれかが有効な場合だけビルド対象になる。
 - `output_info.c` は現行 RING ビルドから意図的に除外している。
   現在の RING では `KEYS`/`LAST` は `keys_info.c` にあり、
   USB/BLE 出力先表示とドングル側バッテリー表示は行わない。
+
+## AI Usage 画面
+
+`CONFIG_PROSPECTOR_RING_AI_USAGE=y` で有効化する、Main と切り替え可能な追加画面。
+Claude / Codex の 5h・7d 使用率を縦棒グラフ4本で表示する。使用率データはキーボード側の
+RawHID ハンドラ（例: hitsuki46 の `CONFIG_HITSUKI46_RAW_HID_AI_USAGE`）が getter 経由で供給する。
+詳細レイアウトは [ring-ai-usage-ui-spec.md](ring-ai-usage-ui-spec.md) を参照。
+
+切替:
+
+- 切替キー長押し（既定 F21=`112`、約 700ms、`PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY`）。
+- 画面長押しタッチ（約 700ms、`PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH`、CST816S）。
+- いずれも「押し続けて閾値到達時」に切替（離した瞬間ではない）。`lv_async_call()` で LVGL スレッド上で実行。
+
+レイアウト切替（Main → AI Usage）:
+
+- 共通オブジェクト（MOD/IME チップ・レイヤー名）を AI Usage 座標へ移動。レイヤー名は cormorant_30 へ切替。
+- Main 固有オブジェクト（バッテリーリング・`LAST`・`KEYS`・メイン縦区切り線・輝度・Caps Word チップ）を hidden。
+- `ai_usage_root` を生成し、`lv_obj_move_background()` で共通オブジェクトを前面維持。
+- 戻り（AI Usage → Main）で `ai_usage_root` を破棄し、座標・表示を復元。
+
+更新:
+
+- 表示中のみ `k_work_delayable`（`zmk_display_work_q()`）で getter をポーリングしてバー/数値を更新。
+- テーマ切替時は `ring_ai_usage_apply_theme()` で背景/track/ラベル色を再適用。
 
 ## 現状の制限と注意点
 

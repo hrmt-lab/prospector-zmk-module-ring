@@ -15,6 +15,15 @@ extern lv_font_t CormorantGaramond_Regular_36;
 extern lv_font_t CormorantGaramond_Regular_30;
 extern lv_font_t DINishCondensed_SemiBold_20;
 
+/* AI Usage layer-name placement (upper-left, just below the keyboard name).
+ * cormorant_30 has a 32px line height, so y=29 keeps it clear of the kb name
+ * above and the AI USAGE label below. */
+#define AI_LAYER_NAME_X     18
+#define AI_LAYER_NAME_Y     29
+/* Trimmed so the right edge (18+104=122) clears the leftmost MOD chip
+ * (C, left edge 124) in the AI Usage layout. */
+#define AI_LAYER_NAME_W     104
+
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
 // Ring center in absolute screen coordinates
@@ -364,5 +373,38 @@ void ring_battery_rings_apply_theme(void) {
         /* Re-run ring update to refresh disconnected-state track color
          * on the indicator arc and dot.                                    */
         update_ring(i);
+    }
+}
+
+void ring_battery_rings_apply_layout(bool ai_usage) {
+    /* Arcs, dots and value labels belong to the Main layout only. */
+    for (int i = 0; i < RING_PERIPHERAL_COUNT; i++) {
+        lv_obj_t *objs[] = {s_arcs[i], s_dots[i], s_vals[i]};
+        for (int j = 0; j < 3; j++) {
+            if (!objs[j]) {
+                continue;
+            }
+            if (ai_usage) {
+                lv_obj_add_flag(objs[j], LV_OBJ_FLAG_HIDDEN);
+            } else {
+                lv_obj_clear_flag(objs[j], LV_OBJ_FLAG_HIDDEN);
+            }
+        }
+    }
+
+    if (!s_layer_name) {
+        return;
+    }
+
+    if (ai_usage) {
+        lv_obj_set_style_text_font(s_layer_name, &CormorantGaramond_Regular_30, LV_PART_MAIN);
+        lv_obj_set_style_text_align(s_layer_name, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
+        lv_obj_set_width(s_layer_name, AI_LAYER_NAME_W);
+        lv_obj_set_pos(s_layer_name, AI_LAYER_NAME_X, AI_LAYER_NAME_Y);
+    } else {
+        lv_obj_set_style_text_font(s_layer_name, &LAYER_NAME_FONT, LV_PART_MAIN);
+        lv_obj_set_style_text_align(s_layer_name, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+        lv_obj_set_width(s_layer_name, 150);
+        lv_obj_set_pos(s_layer_name, RING_CENTER_X - 75, LAYER_NAME_Y - 20);
     }
 }

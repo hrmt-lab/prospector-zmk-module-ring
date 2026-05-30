@@ -62,6 +62,19 @@ lv_obj_t *zmk_display_status_screen(void) {
     return screen;
 }
 
+/* Show/hide Main-only screen decoration (the vertical divider at x=190).
+ * Hidden while the AI Usage screen is shown. */
+void ring_status_screen_set_main_decor_visible(bool visible) {
+    if (!s_divider) {
+        return;
+    }
+    if (visible) {
+        lv_obj_clear_flag(s_divider, LV_OBJ_FLAG_HIDDEN);
+    } else {
+        lv_obj_add_flag(s_divider, LV_OBJ_FLAG_HIDDEN);
+    }
+}
+
 void ring_status_screen_apply_theme(void) {
     if (s_screen) {
         lv_obj_set_style_bg_color(s_screen,

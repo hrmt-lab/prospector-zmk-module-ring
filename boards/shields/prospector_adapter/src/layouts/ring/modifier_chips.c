@@ -28,6 +28,20 @@ static const char   *MOD_CHIP_TEXT[4] = {"C", "S", "A", "G"};
 
 static const int16_t STATE_CHIP_X[2]    = {208, 238};
 static const int16_t STATE_CHIP_Y[2]    = {114, 114};
+
+/* AI Usage layout: single top row of MOD chips.
+ * Centers 136/166/196/226 (30px spacing, same as Main), cy=40, stored as
+ * top-left positions (center - radius 12). IME chip center 256 leaves an 8px
+ * edge gap from the G chip (30 - 12 - 10). C chip left edge = 124, so the AI
+ * layer name width is trimmed to clear it. */
+static const int16_t MOD_CHIP_X_AI[4]   = {124, 154, 184, 214};
+/* Chip vertical center 43 matches the AI layer name's optical center:
+ * cormorant_30 baseline y52, cap height 19 -> cap center 52-19/2 = 42.5.
+ * MOD diam 24 -> pos Y = 43-12 = 31; IME diam 20 -> pos Y = 43-10 = 33. */
+static const int16_t MOD_CHIP_Y_AI[4]   = {31, 31, 31, 31};
+/* AI Usage IME chip center (256, 43) -> top-left (246, 33). */
+static const int16_t STATE_IME_X_AI     = 246;
+static const int16_t STATE_IME_Y_AI     = 33;
 // ⇪ = U+21EA (UTF-8: \xe2\x87\xaa), あ = U+3042 (UTF-8: \xe3\x81\x82)
 static const char   *STATE_CHIP_TEXT[2] = {"\xe2\x87\xaa", "\xe3\x81\x82"};
 
@@ -201,4 +215,36 @@ void ring_modifier_chips_apply_theme(void) {
      * now calls ring_color_XXX() functions, the new theme colors are picked
      * up automatically here without any extra logic.                          */
     modifier_chips_update_cb(s_last_state);
+}
+
+void ring_modifier_chips_apply_layout(bool ai_usage) {
+    /* MOD/STATE separator is only meaningful in the Main two-block layout. */
+    if (s_sep) {
+        if (ai_usage) {
+            lv_obj_add_flag(s_sep, LV_OBJ_FLAG_HIDDEN);
+        } else {
+            lv_obj_clear_flag(s_sep, LV_OBJ_FLAG_HIDDEN);
+        }
+    }
+
+    struct zmk_widget_modifier_chips *widget;
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
+        for (int i = 0; i < 4; i++) {
+            lv_obj_set_pos(widget->mod_chips[i],
+                           ai_usage ? MOD_CHIP_X_AI[i] : MOD_CHIP_X[i],
+                           ai_usage ? MOD_CHIP_Y_AI[i] : MOD_CHIP_Y[i]);
+        }
+
+        /* state_chips[1] = IME (kept on both layouts). */
+        lv_obj_set_pos(widget->state_chips[1],
+                       ai_usage ? STATE_IME_X_AI : STATE_CHIP_X[1],
+                       ai_usage ? STATE_IME_Y_AI : STATE_CHIP_Y[1]);
+
+        /* state_chips[0] = Caps Word: hidden in AI Usage layout, kept on Main. */
+        if (ai_usage) {
+            lv_obj_add_flag(widget->state_chips[0], LV_OBJ_FLAG_HIDDEN);
+        } else {
+            lv_obj_clear_flag(widget->state_chips[0], LV_OBJ_FLAG_HIDDEN);
+        }
+    }
 }
