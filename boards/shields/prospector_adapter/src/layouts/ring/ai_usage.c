@@ -38,6 +38,7 @@ void ring_status_screen_set_main_decor_visible(bool visible);
 #define AI_FLAG_5H_VALID  BIT(0)
 #define AI_FLAG_7D_VALID  BIT(1)
 #define AI_FLAG_ESTIMATED BIT(2)
+#define AI_FLAG_QUOTA     BIT(4)
 #define AI_FLAG_STALE     BIT(5)
 #define AI_FLAG_ERROR     BIT(7)
 
@@ -51,12 +52,13 @@ void ring_status_screen_set_main_decor_visible(bool visible);
  *   AI USAGE label (y62-77) / 5H,7D column labels (y78-93) / bars (y94+).  */
 #define BAR_W        52
 #define BAR_TOP      94
-#define BAR_MAX_H    96
+#define BAR_MAX_H    84
 #define BAR_RADIUS   5
 #define AI_LABEL_Y   62
 #define COL_LABEL_Y  78
-#define VALUE_Y      194
-#define TOOL_Y       212
+#define VALUE_Y      180
+#define RESET_Y      200
+#define TOOL_Y       218
 #define REFRESH_PERIOD K_SECONDS(2)
 
 /* Bar index: 0=Claude 5H, 1=Claude 7D, 2=Codex 5H, 3=Codex 7D. */
@@ -73,6 +75,7 @@ static lv_obj_t *s_root      = NULL;
 static lv_obj_t *s_bar_bg[4]   = {0};
 static lv_obj_t *s_bar_fill[4] = {0};
 static lv_obj_t *s_value[4]    = {0};
+static lv_obj_t *s_reset[4]    = {0};
 static lv_obj_t *s_col_label[4] = {0};
 static lv_obj_t *s_tool[2]     = {0};
 static lv_obj_t *s_ai_label  = NULL;
@@ -88,6 +91,10 @@ struct ai_view {
     uint8_t flags;
     uint16_t five_bp;
     uint16_t seven_bp;
+    uint32_t five_reset;
+    uint32_t seven_reset;
+    uint32_t updated_unix;
+    int64_t received_uptime_ms;
 };
 
 static struct ai_view fetch_provider(uint8_t provider) {
@@ -99,6 +106,10 @@ static struct ai_view fetch_provider(uint8_t provider) {
         v.flags = p.flags;
         v.five_bp = p.five_hour_used_bp;
         v.seven_bp = p.seven_day_used_bp;
+        v.five_reset = p.five_hour_reset_unix;
+        v.seven_reset = p.seven_day_reset_unix;
+        v.updated_unix = p.updated_unix;
+        v.received_uptime_ms = p.received_uptime_ms;
     }
 #else
     ARG_UNUSED(provider);
@@ -157,6 +168,44 @@ static void update_bar(int idx, const struct ai_view *v) {
     }
 }
 
+/* Relative countdown until the window resets. Shown only for quota-source data
+ * with a valid window and a non-zero reset time; blank otherwise. */
+static void update_reset(int idx, const struct ai_view *v) {
+    if (!s_reset[idx]) {
+        return;
+    }
+
+    bool is_5h = BAR_IS_5H[idx];
+    uint8_t valid_bit = is_5h ? AI_FLAG_5H_VALID : AI_FLAG_7D_VALID;
+    uint32_t reset = is_5h ? v->five_reset : v->seven_reset;
+
+    if (!v->present || !(v->flags & valid_bit) || !(v->flags & AI_FLAG_QUOTA) || reset == 0) {
+        lv_label_set_text(s_reset[idx], "");
+        return;
+    }
+
+    int64_t elapsed = (k_uptime_get() - v->received_uptime_ms) / 1000;
+    int64_t remaining = (int64_t)reset - (int64_t)v->updated_unix - elapsed;
+    if (remaining < 0) {
+        remaining = 0;
+    }
+
+    char buf[12];
+    if (remaining >= 86400) {
+        /* >= 1 day: days + hours. */
+        snprintf(buf, sizeof(buf), "%dd %dh", (int)(remaining / 86400),
+                 (int)((remaining % 86400) / 3600));
+    } else if (remaining >= 3600) {
+        /* < 1 day: hours + minutes (no day field). */
+        snprintf(buf, sizeof(buf), "%dh %dm", (int)(remaining / 3600),
+                 (int)((remaining % 3600) / 60));
+    } else {
+        /* < 1 hour: minutes only. */
+        snprintf(buf, sizeof(buf), "%dm", (int)(remaining / 60));
+    }
+    lv_label_set_text(s_reset[idx], buf);
+}
+
 static void update_bars(void) {
     struct ai_view claude = fetch_provider(AI_PROVIDER_CLAUDE);
     struct ai_view codex = fetch_provider(AI_PROVIDER_CODEX);
@@ -164,6 +213,7 @@ static void update_bars(void) {
     for (int i = 0; i < 4; i++) {
         const struct ai_view *v = (BAR_PROVIDER[i] == AI_PROVIDER_CLAUDE) ? &claude : &codex;
         update_bar(i, v);
+        update_reset(i, v);
     }
 }
 
@@ -240,11 +290,17 @@ static void build_root(lv_obj_t *root) {
         /* Usage value (brand color). */
         s_value[i] = make_label(root, BAR_CX[i], VALUE_Y, BAR_W, &lv_font_montserrat_14,
                                 BAR_COLOR[i], "--");
+
+        /* Reset countdown (dim, filled on update). */
+        s_reset[i] = make_label(root, BAR_CX[i], RESET_Y, BAR_W, &lv_font_montserrat_12,
+                                ring_color_text_sec(), "");
     }
 
-    /* Tool names. */
-    s_tool[0] = make_label(root, 72, TOOL_Y, 80, &lv_font_montserrat_12, AI_COLOR_CLAUDE, "Claude");
-    s_tool[1] = make_label(root, 214, TOOL_Y, 80, &lv_font_montserrat_12, AI_COLOR_CODEX, "Codex");
+    /* Tool names, centered under each provider's two bars:
+     * Claude = midpoint of bars 0/1 (cx 50,116 -> 83);
+     * Codex  = midpoint of bars 2/3 (cx 182,248 -> 215). */
+    s_tool[0] = make_label(root, 83, TOOL_Y, 80, &lv_font_montserrat_12, AI_COLOR_CLAUDE, "Claude");
+    s_tool[1] = make_label(root, 215, TOOL_Y, 80, &lv_font_montserrat_12, AI_COLOR_CODEX, "Codex");
 }
 
 /* ── Show / hide ─────────────────────────────────────────────────────── */
@@ -290,6 +346,7 @@ void ring_show_main(void) {
         s_bar_bg[i] = NULL;
         s_bar_fill[i] = NULL;
         s_value[i] = NULL;
+        s_reset[i] = NULL;
         s_col_label[i] = NULL;
     }
     s_tool[0] = s_tool[1] = NULL;
@@ -330,6 +387,9 @@ void ring_ai_usage_apply_theme(void) {
         }
         if (s_col_label[i]) {
             lv_obj_set_style_text_color(s_col_label[i], lv_color_hex(text_sec), LV_PART_MAIN);
+        }
+        if (s_reset[i]) {
+            lv_obj_set_style_text_color(s_reset[i], lv_color_hex(text_sec), LV_PART_MAIN);
         }
     }
 }

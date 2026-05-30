@@ -145,7 +145,7 @@ CST816S タッチパネルを搭載した Prospector ドングルでは、`CONFI
 
 **AI Usage 画面**
 
-`CONFIG_PROSPECTOR_RING_AI_USAGE=y` を有効にすると、Main 画面と AI Usage 画面を切り替えられます。AI Usage 画面は Claude / Codex の 5 時間枠・7 日枠の使用率を縦棒グラフで表示します（データは [zmk-rawhid-app](https://github.com/hrmt-lab/zmk-rawhid-app) モジュール等のキーボード側 RawHID 連携がホストから受信し、getter 経由で供給）。
+`CONFIG_PROSPECTOR_RING_AI_USAGE=y` を有効にすると、Main 画面と AI Usage 画面を切り替えられます。AI Usage 画面は Claude / Codex の 5 時間枠・7 日枠の使用率を縦棒グラフで表示します（データは [zmk-rawhid-app](https://github.com/hrmt-lab/zmk-rawhid-app) モジュール等のキーボード側 RawHID 連携がホストから受信し、getter 経由で供給）。各バーの下には、その枠のリセットまでの残り時間（相対、例 `5h 30m` / `3d 4h`）も表示します。
 
 | 操作 | 動作 |
 |---|---|
@@ -397,7 +397,7 @@ Brightness changes update the lower-left percentage display immediately. The Boo
 
 **AI Usage screen**
 
-Enable `CONFIG_PROSPECTOR_RING_AI_USAGE=y` to switch between the Main screen and the AI Usage screen, which shows Claude / Codex 5-hour and 7-day usage as vertical bar graphs. The usage data is supplied by a keyboard-side RawHID handler that receives it from the host — typically the [zmk-rawhid-app](https://github.com/hrmt-lab/zmk-rawhid-app) module (as used on hitsuki46).
+Enable `CONFIG_PROSPECTOR_RING_AI_USAGE=y` to switch between the Main screen and the AI Usage screen, which shows Claude / Codex 5-hour and 7-day usage as vertical bar graphs. The usage data is supplied by a keyboard-side RawHID handler that receives it from the host — typically the [zmk-rawhid-app](https://github.com/hrmt-lab/zmk-rawhid-app) module (as used on hitsuki46). Each bar also shows the relative time until that window resets (e.g. `5h 30m` / `3d 4h`).
 
 | Action | Result |
 |---|---|
