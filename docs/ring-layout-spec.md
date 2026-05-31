@@ -45,8 +45,8 @@ CONFIG_PROSPECTOR_STATUS_SCREEN_RING=y
 - 色は `ring_color_text_off()`。
 - 100 時間未満は `UP  h:mm` 形式。
 - 100 時間以上は `UP  Nh` 形式。
-- TIME_SYNC 表示時は `lv_font_montserrat_14`、固定黒文字
-  (`0x000000`)。
+- TIME_SYNC 表示時は `lv_font_montserrat_14`、テーマ追従のプライマリ文字色
+  (`ring_color_text_pri()`、ライト=濃色 / ダーク=明色)。
 - TIME_SYNC 表示時は右端を保ったまま表示域を左方向へ広げ、
   `YYYY-MM-DD HH:MM` 形式まで収める。
 - TIME_SYNC が秒表示を要求する場合は 1 秒ごと、それ以外の時刻表示は

@@ -4,11 +4,11 @@
 #include <zephyr/kernel.h>
 #include <zmk/display.h>
 
-#if __has_include(<hitsuki46/raw_hid_time_sync.h>)
-#include <hitsuki46/raw_hid_time_sync.h>
-#define RING_HAS_HITSUKI46_TIME_SYNC 1
+#if __has_include(<rawhid_app/time_sync.h>)
+#include <rawhid_app/time_sync.h>
+#define RING_HAS_TIME_SYNC 1
 #else
-#define RING_HAS_HITSUKI46_TIME_SYNC 0
+#define RING_HAS_TIME_SYNC 0
 #endif
 
 #include "ring_theme.h"
@@ -21,7 +21,6 @@
 #define TIME_SYNC_X      112
 #define TIME_SYNC_W      150
 #define TIME_SYNC_PERIOD K_SECONDS(1)
-#define TIME_SYNC_COLOR  0x000000
 
 static lv_obj_t *s_uptime_label = NULL;
 static struct k_work_delayable uptime_work;
@@ -40,8 +39,8 @@ static void format_uptime(char *buf, size_t len) {
 }
 
 static bool format_time_sync(char *buf, size_t len) {
-#if RING_HAS_HITSUKI46_TIME_SYNC
-    return hitsuki46_raw_hid_time_sync_format(buf, len);
+#if RING_HAS_TIME_SYNC
+    return rawhid_app_time_sync_format(buf, len);
 #else
     ARG_UNUSED(buf);
     ARG_UNUSED(len);
@@ -50,8 +49,8 @@ static bool format_time_sync(char *buf, size_t len) {
 }
 
 static bool time_sync_wants_seconds(void) {
-#if RING_HAS_HITSUKI46_TIME_SYNC
-    return hitsuki46_raw_hid_time_sync_wants_seconds();
+#if RING_HAS_TIME_SYNC
+    return rawhid_app_time_sync_wants_seconds();
 #else
     return false;
 #endif
@@ -66,7 +65,8 @@ static void apply_display_mode(bool showing_time_sync) {
 
     if (showing_time_sync) {
         lv_obj_set_style_text_font(s_uptime_label, &lv_font_montserrat_14, LV_PART_MAIN);
-        lv_obj_set_style_text_color(s_uptime_label, lv_color_hex(TIME_SYNC_COLOR), LV_PART_MAIN);
+        /* Theme-following primary text so the clock stays readable on dark too. */
+        lv_obj_set_style_text_color(s_uptime_label, lv_color_hex(ring_color_text_pri()), LV_PART_MAIN);
         lv_obj_set_width(s_uptime_label, TIME_SYNC_W);
         lv_obj_set_pos(s_uptime_label, TIME_SYNC_X, UPTIME_Y);
     } else {
