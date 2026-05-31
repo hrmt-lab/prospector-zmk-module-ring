@@ -65,8 +65,9 @@ void ring_status_screen_set_main_decor_visible(bool visible);
 static const uint8_t  BAR_PROVIDER[4] = {AI_PROVIDER_CLAUDE, AI_PROVIDER_CLAUDE,
                                          AI_PROVIDER_CODEX, AI_PROVIDER_CODEX};
 static const bool     BAR_IS_5H[4]    = {true, false, true, false};
-static const int16_t  BAR_X[4]        = {24, 90, 156, 222};
-static const int16_t  BAR_CX[4]       = {50, 116, 182, 248};
+/* Bar group centered on the 280px display: span 15..265 (width 250), center 140. */
+static const int16_t  BAR_X[4]        = {15, 81, 147, 213};
+static const int16_t  BAR_CX[4]       = {41, 107, 173, 239};
 static const uint32_t BAR_COLOR[4]    = {AI_COLOR_CLAUDE, AI_COLOR_CLAUDE,
                                          AI_COLOR_CODEX, AI_COLOR_CODEX};
 
@@ -254,7 +255,7 @@ static void build_root(lv_obj_t *root) {
     /* Group divider between the two providers (no horizontal header rule:
      * the top section is tight and a horizontal line would crowd it). */
     s_hdiv = NULL;
-    s_vdiv = make_line(root, 149, COL_LABEL_Y, 1, (TOOL_Y - COL_LABEL_Y));
+    s_vdiv = make_line(root, 140, COL_LABEL_Y, 1, (TOOL_Y - COL_LABEL_Y));
 
     s_ai_label = lv_label_create(root);
     lv_label_set_text(s_ai_label, "AI USAGE");
@@ -297,10 +298,10 @@ static void build_root(lv_obj_t *root) {
     }
 
     /* Tool names, centered under each provider's two bars:
-     * Claude = midpoint of bars 0/1 (cx 50,116 -> 83);
-     * Codex  = midpoint of bars 2/3 (cx 182,248 -> 215). */
-    s_tool[0] = make_label(root, 83, TOOL_Y, 80, &lv_font_montserrat_12, AI_COLOR_CLAUDE, "Claude");
-    s_tool[1] = make_label(root, 215, TOOL_Y, 80, &lv_font_montserrat_12, AI_COLOR_CODEX, "Codex");
+     * Claude = midpoint of bars 0/1 (cx 41,107 -> 74);
+     * Codex  = midpoint of bars 2/3 (cx 173,239 -> 206). */
+    s_tool[0] = make_label(root, 74, TOOL_Y, 80, &lv_font_montserrat_12, AI_COLOR_CLAUDE, "Claude");
+    s_tool[1] = make_label(root, 206, TOOL_Y, 80, &lv_font_montserrat_12, AI_COLOR_CODEX, "Codex");
 }
 
 /* ── Show / hide ─────────────────────────────────────────────────────── */
