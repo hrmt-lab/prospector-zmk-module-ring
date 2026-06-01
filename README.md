@@ -34,9 +34,9 @@
 - 起動後経過時間表示（`UP`、60 秒ごとに更新。[raw-hid-host](https://github.com/hrmt-lab/RawHID-host) 連携時は時刻表示）
 - 左下の輝度アイコン + 輝度パーセント表示
 - メイン画面の左右タップで輝度調整（CST816S タッチパネル搭載機、オプション）
-- ダブルタップでライト / ダークテーマ切り替え（CST816S タッチパネル搭載機）
+- 長押しタッチでライト / ダークテーマ切り替え（CST816S タッチパネル搭載機）
 - 下スワイプ後、短時間内の右スワイプで Bootloader に入る（CST816S タッチパネル搭載機、オプション）
-- AI Usage 画面（Claude / Codex の 5h・7d 使用率を縦棒グラフで表示。データはホストから RawHID で受信。長押しキー / 長押しタッチで Main と切替、オプション）
+- AI Usage 画面（Claude / Codex の 5h・7d 使用率を縦棒グラフで表示。データはホストから RawHID で受信。長押しキー / ダブルタップで Main と切替、オプション）
 
 ## インストール
 
@@ -286,9 +286,9 @@ On `feat/ring-light`, RING uses a single main screen and handles touch actions d
 - Uptime display (`UP`, updated every 60 seconds; shows time when linked with [raw-hid-host](https://github.com/hrmt-lab/RawHID-host))
 - Brightness icon and percentage in the lower-left corner
 - Tap left/right halves of the main screen to adjust brightness (CST816S touch panel, optional)
-- Double-tap to toggle light / dark theme (CST816S touch panel)
+- Long-press to toggle light / dark theme (CST816S touch panel)
 - Swipe down, then swipe right shortly after, to enter Bootloader (CST816S touch panel, optional)
-- AI Usage screen (vertical bar graphs of Claude / Codex 5h and 7d usage; data received from the host over RawHID; toggle with a long-press key / long-press touch, optional)
+- AI Usage screen (vertical bar graphs of Claude / Codex 5h and 7d usage; data received from the host over RawHID; toggle with a long-press key / double-tap, optional)
 
 ## Installation
 
@@ -381,7 +381,7 @@ keymap {
 
 **Theme toggle**
 
-On Prospector dongles with a CST816S touch panel, enable `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y` to toggle between light and dark themes by double-tapping the display.
+On Prospector dongles with a CST816S touch panel, enable `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y` to toggle between light and dark themes by long-pressing the display (~0.7 s).
 
 **Main-screen touch actions**
 
@@ -402,9 +402,9 @@ Enable `CONFIG_PROSPECTOR_RING_AI_USAGE=y` to switch between the Main screen and
 | Action | Result |
 |---|---|
 | Long-press the toggle key (default F21, ~0.7 s) | Switch Main ↔ AI Usage |
-| Long-press the display (~0.7 s, CST816S panel) | Switch Main ↔ AI Usage |
+| Double-tap the display (CST816S panel) | Switch Main ↔ AI Usage |
 
-The long-press fires once the threshold is reached **while still held** (not on release). Assign the toggle key in your keymap (default F21). Bar colors are fixed to each provider's brand color regardless of the usage value. See [docs/ring-ai-usage-ui-spec.md](docs/ring-ai-usage-ui-spec.md) for details.
+The key long-press fires once the threshold is reached **while still held** (not on release). Assign the toggle key in your keymap (default F21). Bar colors are fixed to each provider's brand color regardless of the usage value. See [docs/ring-ai-usage-ui-spec.md](docs/ring-ai-usage-ui-spec.md) for details.
 
 ## Configuration
 
@@ -443,7 +443,7 @@ When brightness key control is enabled, assign keys that emit the configured key
 
 | Name | Description | Default |
 | ---- | ----------- | ------- |
-| `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | Toggle light/dark theme by double-tapping the display (requires CST816S touch controller) | n |
+| `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | Toggle light/dark theme by long-pressing the display (~0.7 s, requires CST816S touch controller) | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEY` | Toggle light/dark theme via keycode | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEYCODE` | Keycode for toggling theme (when `DARK_TOGGLE_KEY` is enabled) | 111 (F20) |
 
@@ -466,7 +466,7 @@ When brightness key control is enabled, assign keys that emit the configured key
 | `CONFIG_PROSPECTOR_RING_AI_USAGE` | Enable the AI Usage screen (usage data must be supplied by a keyboard-side RawHID handler) | n |
 | `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY` | Toggle Main ↔ AI Usage via a long-pressed keycode | n |
 | `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEYCODE` | Keycode for toggling (when `TOGGLE_KEY` is enabled) | 112 (F21) |
-| `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH` | Toggle via long-press touch (requires CST816S touch controller) | n |
+| `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH` | Toggle via double-tap (requires CST816S touch controller) | n |
 
 `CONFIG_PROSPECTOR_RING_AI_USAGE` alone renders the screen, but usage data requires keyboard-side RawHID integration (the [zmk-rawhid-app](https://github.com/hrmt-lab/zmk-rawhid-app) module's `CONFIG_RAWHID_APP_AI_USAGE`). Without it, values show `--`.
 
