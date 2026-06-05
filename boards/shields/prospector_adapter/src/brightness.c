@@ -144,7 +144,14 @@ extern void als_thread(void *d0, void *d1, void *d2) {
 
     dev = DEVICE_DT_GET_ONE(avago_apds9960);
     if (!device_is_ready(dev)) {
-        printk("sensor: device not ready.\n");
+        /*
+         * Without a working sensor there is nothing to poll. Apply a visible
+         * default brightness once and stop the thread instead of fetching from
+         * an unready device every NORMAL_SAMPLE_SLEEP_MS forever.
+         */
+        LOG_ERR("ALS sensor not ready; applying default brightness and stopping ALS loop");
+        apply_brightness(effective_brightness());
+        return;
     }
 
     /*

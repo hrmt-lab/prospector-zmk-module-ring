@@ -12,6 +12,7 @@
 
 #include "display_colors.h"
 #include "ring_theme.h"
+#include <symbols.h>
 
 extern lv_font_t Unicode_15;
 
@@ -24,7 +25,21 @@ static lv_obj_t *s_sep = NULL;
 
 static const int16_t MOD_CHIP_X[4]    = {206, 236, 206, 236};
 static const int16_t MOD_CHIP_Y[4]    = {46,  46,  76,  76};
+
+/* Per-OS modifier chip glyphs and font (build-time choice via MODIFIER_OS).
+ * Order matches the state mapping below: [0]=CTRL [1]=SHFT [2]=ALT [3]=GUI. */
+#if defined(CONFIG_PROSPECTOR_MODIFIER_OS_MAC)
+extern lv_font_t Symbols_Bold_26;
+static const char   *MOD_CHIP_TEXT[4] =
+    {SYMBOL_CONTROL, SYMBOL_SHIFT, SYMBOL_OPTION, SYMBOL_COMMAND}; /* ⌃ ⇧ ⌥ ⌘ */
+#define MOD_CHIP_FONT (&Symbols_Bold_26)
+#elif defined(CONFIG_PROSPECTOR_MODIFIER_OS_WINDOWS)
+static const char   *MOD_CHIP_TEXT[4] = {"C", "S", "A", "W"};
+#define MOD_CHIP_FONT (&lv_font_montserrat_14)
+#else /* GENERIC */
 static const char   *MOD_CHIP_TEXT[4] = {"C", "S", "A", "G"};
+#define MOD_CHIP_FONT (&lv_font_montserrat_14)
+#endif
 
 static const int16_t STATE_CHIP_X[2]    = {208, 238};
 static const int16_t STATE_CHIP_Y[2]    = {114, 114};
@@ -148,7 +163,7 @@ ZMK_SUBSCRIPTION(widget_modifier_chips, zmk_caps_word_state_changed);
 #endif
 
 static lv_obj_t *create_chip(lv_obj_t *parent, int16_t x, int16_t y, uint8_t diam,
-                              const char *text) {
+                              const char *text, const lv_font_t *font) {
     lv_obj_t *chip = lv_obj_create(parent);
     lv_obj_set_size(chip, diam, diam);
     lv_obj_set_pos(chip, x, y);
@@ -160,7 +175,7 @@ static lv_obj_t *create_chip(lv_obj_t *parent, int16_t x, int16_t y, uint8_t dia
 
     lv_obj_t *label = lv_label_create(chip);
     lv_label_set_text(label, text);
-    lv_obj_set_style_text_font(label, &lv_font_montserrat_14, LV_PART_MAIN);
+    lv_obj_set_style_text_font(label, font, LV_PART_MAIN);
     /* Initial state = OFF; use text_off token. */
     lv_obj_set_style_text_color(label, lv_color_hex(ring_color_text_off()), LV_PART_MAIN);
     lv_label_set_long_mode(label, LV_LABEL_LONG_CLIP);
@@ -175,7 +190,7 @@ int zmk_widget_modifier_chips_init(struct zmk_widget_modifier_chips *widget, lv_
 
     for (int i = 0; i < 4; i++) {
         widget->mod_chips[i] = create_chip(parent, MOD_CHIP_X[i], MOD_CHIP_Y[i],
-                                           MOD_DIAM, MOD_CHIP_TEXT[i]);
+                                           MOD_DIAM, MOD_CHIP_TEXT[i], MOD_CHIP_FONT);
     }
 
     s_sep = lv_obj_create(parent);
@@ -189,11 +204,7 @@ int zmk_widget_modifier_chips_init(struct zmk_widget_modifier_chips *widget, lv_
 
     for (int i = 0; i < 2; i++) {
         widget->state_chips[i] = create_chip(parent, STATE_CHIP_X[i], STATE_CHIP_Y[i],
-                                             STATE_DIAM, STATE_CHIP_TEXT[i]);
-        lv_obj_t *lbl = lv_obj_get_child(widget->state_chips[i], 0);
-        if (lbl) {
-            lv_obj_set_style_text_font(lbl, &Unicode_15, LV_PART_MAIN);
-        }
+                                             STATE_DIAM, STATE_CHIP_TEXT[i], &Unicode_15);
     }
 
     sys_slist_append(&widgets, &widget->node);

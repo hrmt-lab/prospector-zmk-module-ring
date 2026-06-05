@@ -118,7 +118,7 @@ WANAパレットからの派生関係：
 | レイヤー名（"Base" 等） | Cormorant Garamond | 36 | regular | セリフ書体。3ペリフェラル時は 30pt |
 | キーボード名（"Corne" 等） | UI Sans-serif | 11 | medium (500) | |
 | 数値（バッテリー、KEYS、Out番号） | UI Sans-serif | 11 | medium (500) | |
-| MODチップ内文字（C/S/A/G） | UI Sans-serif | 13 | medium ON / regular OFF | |
+| MODチップ内文字（既定 Generic は C/S/A/G） | UI Sans-serif | 13 | medium ON / regular OFF | グリフは `MODIFIER_OS` で OS 別（Win=C/S/A/W、Mac=⌃/⇧/⌥/⌘、Mac のみ Symbols_Bold_26） |
 | STATEチップ内文字（⇪） | UI Sans-serif | 13 | — | Unicode記号 |
 | STATEチップ内文字（あ） | UI Sans-serif | 11 | — | ひらがな |
 | セクションラベル（OUT/KEYS等） | UI Sans-serif | 8 | regular | letter-spacing=2 |
@@ -445,6 +445,7 @@ screen (lv_obj_create)
 ├── mod_s (lv_obj circle r=12 + lv_label "S")   ← SHFT
 ├── mod_a (lv_obj circle r=12 + lv_label "A")   ← ALT
 ├── mod_g (lv_obj circle r=12 + lv_label "G")   ← GUI
+│      ※ ラベルは MODIFIER_OS で OS 別（既定 Generic=C/S/A/G、Win=C/S/A/W、Mac=⌃/⇧/⌥/⌘）
 ├── state_caps (lv_obj circle r=10 + lv_label "⇪")
 ├── state_ime  (lv_obj circle r=10 + lv_label "あ")
 ├── sep_line (lv_obj 横線)

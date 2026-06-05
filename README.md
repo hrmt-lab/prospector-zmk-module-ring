@@ -181,11 +181,15 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 
 輝度キー制御を有効にした場合は、設定したキーコードを送出するキーをキーマップに割り当ててください。デフォルトは F24（輝度アップ）/ F23（輝度ダウン）です。
 
-### モディファイア設定
+### モディファイアチップのスタイル
+
+モディファイアチップ（CTRL / SHFT / ALT / GUI）のグリフを `choice` で選択します（いずれか 1 つ、既定は Generic）。
 
 | 名前 | 説明 | デフォルト |
 | ---- | --- | --------- |
-| `CONFIG_PROSPECTOR_SHOW_MODIFIERS` | モディファイアインジケーターを表示 | y |
+| `CONFIG_PROSPECTOR_MODIFIER_OS_GENERIC` | 文字で表示（C / S / A / G） | ✓（既定） |
+| `CONFIG_PROSPECTOR_MODIFIER_OS_WINDOWS` | 文字で表示（C / S / A / W） | |
+| `CONFIG_PROSPECTOR_MODIFIER_OS_MAC` | Mac 記号で表示（⌃ / ⇧ / ⌥ / ⌘） | |
 
 ### RING ダークテーマ切り替え
 
@@ -433,11 +437,15 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 
 When brightness key control is enabled, assign keys that emit the configured keycodes in your keyboard keymap. The defaults follow YADS/dongle-screen: F24 increases brightness and F23 decreases brightness.
 
-### Modifiers
+### Modifier chip style
+
+Select the glyphs shown on the modifier chips (CTRL / SHFT / ALT / GUI) with a `choice` (pick one; Generic is the default).
 
 | Name | Description | Default |
 | ---- | ----------- | ------- |
-| `CONFIG_PROSPECTOR_SHOW_MODIFIERS` | Display modifier key indicators | y |
+| `CONFIG_PROSPECTOR_MODIFIER_OS_GENERIC` | Letters (C / S / A / G) | ✓ (default) |
+| `CONFIG_PROSPECTOR_MODIFIER_OS_WINDOWS` | Letters (C / S / A / W) | |
+| `CONFIG_PROSPECTOR_MODIFIER_OS_MAC` | Mac symbols (⌃ / ⇧ / ⌥ / ⌘) | |
 
 ### RING Dark Theme Toggle
 
