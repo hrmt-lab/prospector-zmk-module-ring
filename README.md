@@ -129,7 +129,7 @@ keymap {
 
 **テーマ切り替え**
 
-CST816S タッチパネルを搭載した Prospector ドングルでは、`CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y` を有効にすることで、画面をダブルタップしてライトテーマとダークテーマを切り替えられます。
+CST816S タッチパネルを搭載した Prospector ドングルでは、`CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y` を有効にすることで、画面を長押し（約 0.7 秒）してライトテーマとダークテーマを切り替えられます。
 
 **メイン画面タッチ操作**
 
@@ -150,7 +150,7 @@ CST816S タッチパネルを搭載した Prospector ドングルでは、`CONFI
 | 操作 | 動作 |
 |---|---|
 | 切替キーを長押し（既定 F21、約 0.7 秒） | Main ↔ AI Usage を切替 |
-| 画面を長押しタッチ（約 0.7 秒、CST816S 搭載機） | Main ↔ AI Usage を切替 |
+| 画面をダブルタップ（CST816S 搭載機） | Main ↔ AI Usage を切替 |
 
 長押し判定は「押し続けて閾値に達した時点」で切り替わります（離した瞬間ではありません）。切替キーは別途キーマップに割り当ててください（既定は F21）。使用率の色は使用率の値によらず各プロバイダーのブランドカラー固定です。詳細は [docs/ring-ai-usage-ui-spec.md](docs/ring-ai-usage-ui-spec.md) を参照してください。
 
@@ -191,7 +191,7 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 
 | 名前 | 説明 | デフォルト |
 | ---- | --- | --------- |
-| `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | ディスプレイのダブルタップでライト/ダークテーマを切り替え（CST816S タッチコントローラー必須） | n |
+| `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | ディスプレイの長押し（約 0.7 秒）でライト/ダークテーマを切り替え（CST816S タッチコントローラー必須） | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEY` | キーコードでライト/ダークテーマを切り替え | n |
 | `CONFIG_PROSPECTOR_RING_DARK_TOGGLE_KEYCODE` | テーマ切り替えキーコード（`DARK_TOGGLE_KEY` 有効時） | 111 (F20) |
 
@@ -214,7 +214,7 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 | `CONFIG_PROSPECTOR_RING_AI_USAGE` | AI Usage 画面を有効化（使用率データは `zmk-rawhid-app` 等のキーボード側 RawHID 連携が供給） | n |
 | `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY` | キーコード長押しで Main ↔ AI Usage を切替 | n |
 | `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEYCODE` | 切替キーコード（`TOGGLE_KEY` 有効時） | 112 (F21) |
-| `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH` | 画面長押しタッチで切替（CST816S タッチコントローラー必須） | n |
+| `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH` | 画面ダブルタップで切替（CST816S タッチコントローラー必須） | n |
 
 `CONFIG_PROSPECTOR_RING_AI_USAGE` 単体では画面は出ますが、使用率データはキーボード側の RawHID 連携（[zmk-rawhid-app](https://github.com/hrmt-lab/zmk-rawhid-app) の `CONFIG_RAWHID_APP_AI_USAGE`）が必要です。未供給時は `--` 表示になります。
 

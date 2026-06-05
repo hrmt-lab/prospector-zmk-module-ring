@@ -264,7 +264,7 @@ CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y
 
 - キー切り替えは、設定された HID キーコードが press されたときに行う。
 - デフォルトキーコードは `111`、つまり `F20`。
-- タッチ切り替えは CST816S のダブルタップを使う。
+- タッチ切り替えは CST816S の長押し（約 700ms）を使う。
 - テーマ変更は `lv_async_call()` 経由で LVGL スレッド上にスケジュールする。
 - テーマ変更後、RING の各ウィジェットに対して色を再適用する。
 
@@ -296,7 +296,7 @@ CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y
 | --- | --- | --- |
 | `PROSPECTOR_STATUS_SCREEN_RING` | `n` | RING レイアウトを選択する。 |
 | `PROSPECTOR_RING_GESTURE_NAV` | `n` | メイン画面上のタッチ操作を有効化する。 |
-| `PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | `n` | ダブルタップでテーマ切り替えを有効化する。 |
+| `PROSPECTOR_RING_DARK_TOGGLE_TOUCH` | `n` | 長押し（約 700ms）でテーマ切り替えを有効化する。 |
 | `PROSPECTOR_RING_DARK_TOGGLE_KEY` | `n` | キーコードでテーマ切り替えを有効化する。 |
 | `PROSPECTOR_RING_DARK_TOGGLE_KEYCODE` | `111` | テーマ切り替え用 HID キーコード。 |
 | `PROSPECTOR_RING_LAST_KEY_DISPLAY` | `y` | `LAST` 表示を有効化する。 |
@@ -310,7 +310,7 @@ CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y
 | `PROSPECTOR_RING_AI_USAGE` | `n` | AI Usage 画面を有効化する。 |
 | `PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY` | `n` | キーコード長押しで Main↔AI Usage 切替を有効化する。 |
 | `PROSPECTOR_RING_AI_USAGE_TOGGLE_KEYCODE` | `112` | AI Usage 切替用 HID キーコード。デフォルトは F21。 |
-| `PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH` | `n` | 画面長押しタッチで Main↔AI Usage 切替を有効化する。 |
+| `PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH` | `n` | 画面ダブルタップで Main↔AI Usage 切替を有効化する。 |
 
 タッチ関連 CONFIG は、CST816S 入力に必要な CONFIG を自動で select する。
 
@@ -327,7 +327,7 @@ RING 関連の主なファイル:
 | `keys_info.c` | `LAST` 表示と `KEYS` カウンター。 |
 | `uptime_info.c` | 右上の uptime / TIME_SYNC 表示。 |
 | `ring_theme.c` | テーマ状態、切り替え、テーマ再適用。 |
-| `ring_touch.c` | CST816S のジェスチャー設定とメイン画面上のタッチ操作、長押しタッチ切替。 |
+| `ring_touch.c` | CST816S のジェスチャー設定とメイン画面上のタッチ操作、長押しタッチによるテーマ切替、ダブルタップによる AI Usage 切替。 |
 | `ai_usage.c` | AI Usage 画面の生成/破棄、バー描画、長押しキー切替。 |
 | `output_info.c` | 旧 Output 表示。現行 RING ビルドからは除外。 |
 
@@ -348,9 +348,9 @@ RawHID 連携モジュール（[zmk-rawhid-app](https://github.com/hrmt-lab/zmk-
 
 切替:
 
-- 切替キー長押し（既定 F21=`112`、約 700ms、`PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY`）。
-- 画面長押しタッチ（約 700ms、`PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH`、CST816S）。
-- いずれも「押し続けて閾値到達時」に切替（離した瞬間ではない）。`lv_async_call()` で LVGL スレッド上で実行。
+- 切替キー長押し（既定 F21=`112`、約 700ms、`PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY`）。キーは「押し続けて閾値到達時」に切替（離した瞬間ではない）。
+- 画面ダブルタップ（`PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH`、CST816S）。
+- 切替は `lv_async_call()` で LVGL スレッド上で実行。
 
 レイアウト切替（Main → AI Usage）:
 
