@@ -13,6 +13,15 @@
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
+#if IS_ENABLED(CONFIG_PROSPECTOR_STATUS_SCREEN_RING)
+/*
+ * Defined in the RING layout's brightness widget. Forward-declared here (rather
+ * than including the LVGL-pulling header) so the key brightness path can refresh
+ * the on-screen value, matching what the touch path already does.
+ */
+void ring_brightness_info_refresh(void);
+#endif
+
 static const struct device *display = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
 
 /*
@@ -137,6 +146,9 @@ static bool handle_brightness_key(const struct zmk_keycode_state_changed *ev) {
          */
         display_wake();
         prospector_brightness_adjust_user_level(CONFIG_PROSPECTOR_BRIGHTNESS_STEP);
+#if IS_ENABLED(CONFIG_PROSPECTOR_STATUS_SCREEN_RING)
+        ring_brightness_info_refresh();
+#endif
         display_idle_schedule();
         return true;
     }
@@ -144,6 +156,9 @@ static bool handle_brightness_key(const struct zmk_keycode_state_changed *ev) {
     if (ev->keycode == CONFIG_PROSPECTOR_BRIGHTNESS_DOWN_KEYCODE) {
         display_wake();
         prospector_brightness_adjust_user_level(-CONFIG_PROSPECTOR_BRIGHTNESS_STEP);
+#if IS_ENABLED(CONFIG_PROSPECTOR_STATUS_SCREEN_RING)
+        ring_brightness_info_refresh();
+#endif
         display_idle_schedule();
         return true;
     }
