@@ -11,11 +11,6 @@
  * schedules the switch via lv_async_call() and is safe to call from any
  * context. */
 
-/* Hold duration (ms) before a key/touch long-press toggles the screen.
- * The toggle fires once this threshold elapses while still held (not on
- * release). */
-#define RING_AI_USAGE_LONGPRESS_MS 700
-
 void ring_show_ai_usage(void);
 void ring_show_main(void);
 

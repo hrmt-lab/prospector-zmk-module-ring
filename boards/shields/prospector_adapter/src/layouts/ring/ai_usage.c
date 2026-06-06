@@ -410,24 +410,10 @@ void ring_ai_usage_toggle(void) {
     lv_async_call(toggle_async_cb, NULL);
 }
 
-/* ── Optional long-press keycode toggle ──────────────────────────────── */
-
-#if IS_ENABLED(CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY)
-/* Fire once the key has been held for RING_AI_USAGE_LONGPRESS_MS while still
- * pressed (not on release): schedule on press, cancel on release. */
-static struct k_work_delayable key_longpress_work;
-
-static void key_longpress_work_cb(struct k_work *work) {
-    ARG_UNUSED(work);
-    ring_ai_usage_toggle();
-}
-#endif
+/* ── Optional single-press keycode toggle ────────────────────────────── */
 
 static int ring_ai_usage_init(void) {
     k_work_init_delayable(&refresh_work, refresh_work_cb);
-#if IS_ENABLED(CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY)
-    k_work_init_delayable(&key_longpress_work, key_longpress_work_cb);
-#endif
     return 0;
 }
 
@@ -442,10 +428,9 @@ static int ai_usage_toggle_key_listener(const zmk_event_t *eh) {
         return ZMK_EV_EVENT_BUBBLE;
     }
 
+    /* Toggle on key press (single press); ignore the release event. */
     if (ev->state) {
-        k_work_schedule(&key_longpress_work, K_MSEC(RING_AI_USAGE_LONGPRESS_MS));
-    } else {
-        k_work_cancel_delayable(&key_longpress_work);
+        ring_ai_usage_toggle();
     }
 
     return ZMK_EV_EVENT_BUBBLE;

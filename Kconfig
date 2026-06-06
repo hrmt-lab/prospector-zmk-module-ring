@@ -168,11 +168,11 @@ config PROSPECTOR_RING_AI_USAGE
       CONFIG_RAWHID_APP_AI_USAGE); without it the bars show no data.
 
 config PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY
-    bool "Toggle RING AI Usage screen via long-pressed keycode"
+    bool "Toggle RING AI Usage screen via keycode press"
     default n
     depends on PROSPECTOR_RING_AI_USAGE
     help
-      When enabled, long-pressing the configured keycode toggles between the
+      When enabled, pressing the configured keycode toggles between the
       RING main screen and the AI Usage screen.
 
 config PROSPECTOR_RING_AI_USAGE_TOGGLE_KEYCODE
@@ -180,7 +180,7 @@ config PROSPECTOR_RING_AI_USAGE_TOGGLE_KEYCODE
     default 112
     depends on PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY
     help
-      HID keycode that toggles the AI Usage screen on long press.
+      HID keycode that toggles the AI Usage screen on press.
       Default is F21 (112). Brightness keys use F23(114)/F24(115) and the
       dark-theme key uses F20(111).
 

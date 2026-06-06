@@ -36,7 +36,7 @@
 - メイン画面の左右タップで輝度調整（CST816S タッチパネル搭載機、オプション）
 - 長押しタッチでライト / ダークテーマ切り替え（CST816S タッチパネル搭載機）
 - 下スワイプ後、短時間内の右スワイプで Bootloader に入る（CST816S タッチパネル搭載機、オプション）
-- AI Usage 画面（Claude / Codex の 5h・7d 使用率を縦棒グラフで表示。データはホストから RawHID で受信。長押しキー / ダブルタップで Main と切替、オプション）
+- AI Usage 画面（Claude / Codex の 5h・7d 使用率を縦棒グラフで表示。データはホストから RawHID で受信。切替キー単押し / ダブルタップで Main と切替、オプション）
 
 ## インストール
 
@@ -149,10 +149,10 @@ CST816S タッチパネルを搭載した Prospector ドングルでは、`CONFI
 
 | 操作 | 動作 |
 |---|---|
-| 切替キーを長押し（既定 F21、約 0.7 秒） | Main ↔ AI Usage を切替 |
+| 切替キーを押す（既定 F21） | Main ↔ AI Usage を切替 |
 | 画面をダブルタップ（CST816S 搭載機） | Main ↔ AI Usage を切替 |
 
-長押し判定は「押し続けて閾値に達した時点」で切り替わります（離した瞬間ではありません）。切替キーは別途キーマップに割り当ててください（既定は F21）。使用率の色は使用率の値によらず各プロバイダーのブランドカラー固定です。詳細は [docs/ring-ai-usage-ui-spec.md](docs/ring-ai-usage-ui-spec.md) を参照してください。
+切替キーは押した瞬間（単押し）に切り替わります。切替キーは別途キーマップに割り当ててください（既定は F21）。使用率の色は使用率の値によらず各プロバイダーのブランドカラー固定です。詳細は [docs/ring-ai-usage-ui-spec.md](docs/ring-ai-usage-ui-spec.md) を参照してください。
 
 ## 設定
 
@@ -216,7 +216,7 @@ CONFIG_PROSPECTOR_BRIGHTNESS_KEY_CONTROL=y
 | 名前 | 説明 | デフォルト |
 | ---- | --- | --------- |
 | `CONFIG_PROSPECTOR_RING_AI_USAGE` | AI Usage 画面を有効化（使用率データは `zmk-rawhid-app` 等のキーボード側 RawHID 連携が供給） | n |
-| `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY` | キーコード長押しで Main ↔ AI Usage を切替 | n |
+| `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY` | キーコード単押しで Main ↔ AI Usage を切替 | n |
 | `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEYCODE` | 切替キーコード（`TOGGLE_KEY` 有効時） | 112 (F21) |
 | `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH` | 画面ダブルタップで切替（CST816S タッチコントローラー必須） | n |
 
@@ -292,7 +292,7 @@ On `feat/ring-light`, RING uses a single main screen and handles touch actions d
 - Tap left/right halves of the main screen to adjust brightness (CST816S touch panel, optional)
 - Long-press to toggle light / dark theme (CST816S touch panel)
 - Swipe down, then swipe right shortly after, to enter Bootloader (CST816S touch panel, optional)
-- AI Usage screen (vertical bar graphs of Claude / Codex 5h and 7d usage; data received from the host over RawHID; toggle with a long-press key / double-tap, optional)
+- AI Usage screen (vertical bar graphs of Claude / Codex 5h and 7d usage; data received from the host over RawHID; toggle with a key press / double-tap, optional)
 
 ## Installation
 
@@ -472,7 +472,7 @@ Select the glyphs shown on the modifier chips (CTRL / SHFT / ALT / GUI) with a `
 | Name | Description | Default |
 | ---- | ----------- | ------- |
 | `CONFIG_PROSPECTOR_RING_AI_USAGE` | Enable the AI Usage screen (usage data must be supplied by a keyboard-side RawHID handler) | n |
-| `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY` | Toggle Main ↔ AI Usage via a long-pressed keycode | n |
+| `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY` | Toggle Main ↔ AI Usage via a keycode press | n |
 | `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_KEYCODE` | Keycode for toggling (when `TOGGLE_KEY` is enabled) | 112 (F21) |
 | `CONFIG_PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH` | Toggle via double-tap (requires CST816S touch controller) | n |
 

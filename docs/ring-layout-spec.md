@@ -308,7 +308,7 @@ CONFIG_PROSPECTOR_RING_DARK_TOGGLE_TOUCH=y
 | `PROSPECTOR_BRIGHTNESS_STEP` | `10` | キー操作/タッチ操作時の輝度変更量。 |
 | `PROSPECTOR_DISPLAY_IDLE_TIMEOUT` | `0` | 表示/バックライトを消灯するまでの秒数。0 は無効。 |
 | `PROSPECTOR_RING_AI_USAGE` | `n` | AI Usage 画面を有効化する。 |
-| `PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY` | `n` | キーコード長押しで Main↔AI Usage 切替を有効化する。 |
+| `PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY` | `n` | キーコード単押しで Main↔AI Usage 切替を有効化する。 |
 | `PROSPECTOR_RING_AI_USAGE_TOGGLE_KEYCODE` | `112` | AI Usage 切替用 HID キーコード。デフォルトは F21。 |
 | `PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH` | `n` | 画面ダブルタップで Main↔AI Usage 切替を有効化する。 |
 
@@ -328,7 +328,7 @@ RING 関連の主なファイル:
 | `uptime_info.c` | 右上の uptime / TIME_SYNC 表示。 |
 | `ring_theme.c` | テーマ状態、切り替え、テーマ再適用。 |
 | `ring_touch.c` | CST816S のジェスチャー設定とメイン画面上のタッチ操作、長押しタッチによるテーマ切替、ダブルタップによる AI Usage 切替。 |
-| `ai_usage.c` | AI Usage 画面の生成/破棄、バー描画、長押しキー切替。 |
+| `ai_usage.c` | AI Usage 画面の生成/破棄、バー描画、単押しキー切替。 |
 | `output_info.c` | 旧 Output 表示。現行 RING ビルドからは除外。 |
 
 ビルド条件:
@@ -348,7 +348,7 @@ RawHID 連携モジュール（[zmk-rawhid-app](https://github.com/hrmt-lab/zmk-
 
 切替:
 
-- 切替キー長押し（既定 F21=`112`、約 700ms、`PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY`）。キーは「押し続けて閾値到達時」に切替（離した瞬間ではない）。
+- 切替キー単押し（既定 F21=`112`、`PROSPECTOR_RING_AI_USAGE_TOGGLE_KEY`）。キー押下時（state=press）に切替し、離した瞬間は無視。
 - 画面ダブルタップ（`PROSPECTOR_RING_AI_USAGE_TOGGLE_TOUCH`、CST816S）。
 - 切替は `lv_async_call()` で LVGL スレッド上で実行。
 
